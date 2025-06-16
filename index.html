@@ -72,6 +72,22 @@
             box-shadow: 0 0 20px 10px #a855f7; /* purple-500 */
             transition: box-shadow 0.5s ease-in-out;
         }
+        .nav-button {
+  display: flex;
+  flex-direction: column; /* Stack icon and text vertically */
+  align-items: center; /* Center align the items */
+  justify-content: center; /* Center content horizontally */
+}
+
+.nav-button i {
+  margin-bottom: 4px; /* Space between icon and text */
+}
+
+.nav-button span {
+  display: block; /* Ensure text stays below the icon */
+  text-align: center; /* Optional: centers the text */
+}
+
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -258,7 +274,29 @@
 
                 <div id="conversation-page" class="page"></div>
             </div>
-            <nav id="bottom-nav" class="w-full flex-shrink-0 flex items-center justify-around bg-white border-t p-2"><button data-icon="bookmark" class="nav-button" onclick="navigateTo('orders-page', this)"><i class="far fa-bookmark text-2xl text-gray-400"></i><span class="text-xs text-gray-500">My Orders</span></button><button data-icon="heart" class="nav-button" onclick="navigateTo('favorites-page', this)"><i class="far fa-heart text-2xl text-gray-400"></i><span class="text-xs text-gray-500">My Favorites</span></button><button data-icon="home" class="nav-button active" onclick="navigateTo('swipe-page', this)"><i class="fas fa-home text-2xl text-gray-400"></i><span class="text-xs text-gray-500">Home</span></button><button data-icon="comment" class="nav-button" onclick="window.open('https://telegram.me/', '_blank')"><i class="far fa-comment-dots text-2xl text-gray-400"></i><span class="text-xs text-gray-500">Chat with us</span></button><button data-icon="user" class="nav-button" onclick="navigateTo('profile-page', this)"><i class="far fa-user text-2xl text-gray-400"></i><span class="text-xs text-gray-500">Profile</span></button></nav>
+<nav id="bottom-nav" class="w-full flex-shrink-0 flex items-center justify-around bg-white border-t p-2">
+  <button data-icon="bookmark" class="nav-button" onclick="navigateTo('orders-page', this)">
+    <i class="far fa-bookmark text-2xl text-gray-400"></i>
+    <span class="text-xs text-gray-500">My Orders</span>
+  </button>
+  <button data-icon="heart" class="nav-button" onclick="navigateTo('favorites-page', this)">
+    <i class="far fa-heart text-2xl text-gray-400"></i>
+    <span class="text-xs text-gray-500">My Favorites</span>
+  </button>
+  <button data-icon="home" class="nav-button active" onclick="navigateTo('swipe-page', this)">
+    <i class="fas fa-home text-2xl text-gray-400"></i>
+    <span class="text-xs text-gray-500">Home</span>
+  </button>
+  <button data-icon="comment" class="nav-button" onclick="window.open('https://telegram.me/', '_blank')">
+    <i class="far fa-comment-dots text-2xl text-gray-400"></i>
+    <span class="text-xs text-gray-500">Chat with us</span>
+  </button>
+  <button data-icon="user" class="nav-button" onclick="navigateTo('profile-page', this)">
+    <i class="far fa-user text-2xl text-gray-400"></i>
+    <span class="text-xs text-gray-500">Profile</span>
+  </button>
+</nav>
+
         </div>
 
         <!-- Full Screen Profile Detail From Swipe -->
@@ -281,7 +319,18 @@
             { id: 3, name: 'Isabella', age: 25, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2OTQ&lib=rb-4.0.3&q=80&w=1080', bio: 'Artist and dog mom.', price: 200, rating: 4.9 },
             { id: 4, name: 'Ken', age: 29, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1583864697784-a0efc8379f70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU3NDM&lib=rb-4.0.3&q=80&w=1080', bio: 'Traveler and photographer.', price: 180, rating: 4.7 },
             { id: 5, name: 'Chloe', age: 26, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU3NzY&lib=rb-4.0.3&q=80&w=1080', bio: 'Traveler, foodie, and film buff.', price: 165, rating: 4.6 },
-            { id: 6, name: 'Ben', age: 31, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU4MDg&lib=rb-4.0.3&q=80&w=1080', bio: 'Into fitness and finance.', price: 250, rating: 4.8 }
+            { id: 6, name: 'Ben', age: 31, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU4MDg&lib=rb-4.0.3&q=80&w=1080', bio: 'Into fitness and finance.', price: 250, rating: 4.8 },
+            { id: 7, name: 'Isabella', age: 26, location: 'Siem Reap', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Coffeeholic and bookworm.', price: 180, rating: 4.9 },
+            { id: 8, name: 'Chloe', age: 29, location: 'Kampot', img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Sunrise chaser and yoga instructor.', price: 210, rating: 4.8 },
+            { id: 9, name: 'Marcus', age: 31, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Film photographer and aspiring chef.', price: 230, rating: 4.7 },
+            { id: 10, name: 'Elena', age: 25, location: 'Sihanoukville', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Ocean lover and marine life advocate.', price: 200, rating: 4.9 },
+            { id: 11, name: 'Ben', age: 32, location: 'Kampot', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Coffee enthusiast and documentary filmmaker.', price: 260, rating: 4.8 },
+            { id: 12, name: 'Maya', age: 26, location: 'Siem Reap', img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Loves painting and visiting ancient ruins.', price: 205, rating: 4.7 },
+            { id: 13, name: 'Ethan', age: 29, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Tech entrepreneur and fitness junkie.', price: 270, rating: 4.9 },            
+            { id: 16, name: 'David', age: 34, location: 'Battambang', img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Architect with a passion for ancient history.', price: 250, rating: 4.6 },
+            { id: 17, name: 'Olivia', age: 27, location: 'Siem Reap', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Pastry chef and cat mom of two.', price: 190, rating: 4.8 },
+            { id: 18, name: 'Liam', age: 30, location: 'Koh Kong', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Exploring the world on my motorbike.', price: 220, rating: 4.7 },
+            { id: 19, name: 'Jessica', age: 28, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Graphic designer and playlist curator.', price: 240, rating: 4.9 }
         ];
         const hotels = [
             { id: 1, name: 'Rosewood', location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80', price: 40 },
