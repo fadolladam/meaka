@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeaKa</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .card-transition { transition: transform 0.3s ease-in-out; }
+        .card img { pointer-events: none; }
+        .swipe-indicator {
+            position: absolute; top: 40px; font-size: 3rem; font-weight: bold;
+            text-transform: uppercase; border-radius: 0.5rem; border: 5px solid;
+            padding: 0.25rem 1rem; opacity: 0; transform: rotate(0deg);
+        }
+        .like { color: #4ade80; border-color: #4ade80; left: 20px; transform: rotate(-15deg); }
+        .nope { color: #f87171; border-color: #f87171; right: 20px; transform: rotate(15deg); }
+        
+        .page { display: none; flex-direction: column; height: 100%; }
+        .page.active { display: flex; }
+
+        .nav-button.active i, .nav-button.active span { color: #ef4444; }
+        
+        #modal-container { display: none; transition: opacity 0.3s ease-out; }
+        #modal-container.active { display: flex; opacity: 1; pointer-events: auto; }
+        #modal-content { transition: transform 0.3s ease-out; transform: translateY(100%); }
+        #modal-container.active #modal-content { transform: translateY(0); }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .service-card.selected { border-color: #ef4444; background-color: #fee2e2; }
+        
+        #match-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Custom toggle switch */
+        .toggle-checkbox:checked { background-color: #ef4444; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #ef4444; }
+
+        /* Styles for Favorites tabs */
+        .fav-tab-btn.active { background-color: #ef4444; color: white; }
+        .fav-tab-content { display: none; }
+        .fav-tab-content.active { display: grid; }
+
+        /* Full screen profile detail view */
+        #profile-detail-view {
+            transition: transform 0.4s ease-in-out;
+            transform: translateY(100%);
+        }
+        #profile-detail-view.active {
+            transform: translateY(0);
+        }
+        
+        /* Boost animation */
+        #app-container.boost-active {
+            box-shadow: 0 0 20px 10px #a855f7; /* purple-500 */
+            transition: box-shadow 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <!-- Mobile Phone Frame -->
+    <div id="app-container" class="w-full max-w-sm h-[95vh] max-h-[850px] bg-white rounded-3xl shadow-2xl flex flex-col relative overflow-hidden">
+
+        <!-- ===== Authentication & Onboarding Pages ===== -->
+        <div id="auth-wrapper" class="h-full overflow-y-auto">
+             <div id="login-page" class="page flex-col justify-center p-6 space-y-6">
+                 <div class="text-center"><i class="fas fa-fire-alt text-6xl text-red-500"></i><h1 class="text-3xl font-bold mt-4">Welcome Back</h1><p class="text-gray-500">Sign in to continue.</p></div>
+                 <div class="space-y-4"><input type="email" placeholder="Email" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"><input type="password" placeholder="Password" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"></div>
+                 <div class="space-y-3"><button id="login-btn" class="w-full bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600">Login</button><button class="w-full text-sm text-gray-500 hover:underline" onclick="navigateToAuth('forgot-password-page')">Forgot Password?</button></div>
+                 <p class="text-center text-sm text-gray-500">Don't have an account? <button class="font-bold text-red-500 hover:underline" onclick="navigateToAuth('signup-phone-page')">Sign Up</button></p>
+            </div>
+            <div id="forgot-password-page" class="page p-6 flex-col">
+                <button class="self-start text-gray-500" onclick="navigateToAuth('login-page')"><i class="fas fa-arrow-left"></i> Back</button>
+                <h1 class="text-2xl font-bold mt-8">Reset Password</h1><p class="text-gray-500 mb-6">Enter your email and we'll send a reset link.</p>
+                <input type="email" placeholder="Email Address" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400">
+                <button class="w-full bg-red-500 text-white py-3 rounded-lg font-bold mt-auto" onclick="navigateToAuth('login-page')">Send Reset Link</button>
+            </div>
+            <div id="signup-phone-page" class="page p-6 flex-col">
+                <button class="self-start text-gray-500" onclick="navigateToAuth('login-page')"><i class="fas fa-arrow-left"></i> Back</button>
+                <h1 class="text-2xl font-bold mt-8">What's your number?</h1><p class="text-gray-500 mb-6">We'll send a code to verify your Telegram.</p>
+                <input type="tel" placeholder="Phone Number" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400">
+                <button class="w-full bg-red-500 text-white py-3 rounded-lg font-bold mt-auto" onclick="navigateToAuth('signup-otp-page')">Continue</button>
+            </div>
+            <div id="signup-otp-page" class="page p-6 flex-col">
+                <button class="self-start text-gray-500" onclick="navigateToAuth('signup-phone-page')"><i class="fas fa-arrow-left"></i> Back</button>
+                <h1 class="text-2xl font-bold mt-8">Enter your code</h1><p class="text-gray-500 mb-6">We sent it to your number.</p>
+                <input type="text" placeholder="_ _ _ _" class="w-full text-center text-3xl tracking-[1rem] px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400">
+                <button class="w-full bg-red-500 text-white py-3 rounded-lg font-bold mt-auto" onclick="navigateToAuth('signup-gender-page')">Verify</button>
+            </div>
+            <div id="signup-gender-page" class="page p-6 flex-col">
+                <h1 class="text-2xl font-bold mt-8">I am a...</h1>
+                <div class="flex-grow flex flex-col justify-center space-y-4">
+                    <button class="w-full border-2 border-gray-300 text-gray-700 py-4 rounded-lg font-bold text-lg hover:border-red-500" onclick="selectUserType('buyer')">Boy / Buyer</button>
+                    <button class="w-full border-2 border-gray-300 text-gray-700 py-4 rounded-lg font-bold text-lg hover:border-red-500" onclick="selectUserType('seller')">Girl / Seller</button>
+                </div>
+            </div>
+            <div id="signup-seller-photos-page" class="page p-6 flex-col">
+                 <h1 class="text-2xl font-bold mt-8">Upload your photos</h1><p class="text-gray-500 mb-6">Add 2-6 photos to showcase yourself.</p>
+                 <div class="flex-grow grid grid-cols-3 gap-2">
+                    <div class="bg-gray-200 rounded-lg flex items-center justify-center"><i class="fas fa-plus text-gray-400"></i></div>
+                    <div class="bg-gray-200 rounded-lg"></div><div class="bg-gray-200 rounded-lg"></div>
+                    <div class="bg-gray-200 rounded-lg"></div><div class="bg-gray-200 rounded-lg"></div><div class="bg-gray-200 rounded-lg"></div>
+                 </div>
+                 <button class="w-full bg-red-500 text-white py-3 rounded-lg font-bold mt-auto" onclick="navigateToAuth('signup-seller-services-page')">Next</button>
+            </div>
+            <div id="signup-seller-services-page" class="page p-6 flex-col">
+                <h1 class="text-2xl font-bold mt-8">What services do you provide?</h1>
+                <div class="flex-grow grid grid-cols-3 gap-3 my-4 overflow-y-auto text-center">
+                    <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer"><i class="fas fa-coffee text-2xl mb-1"></i><span class="text-xs">Coffee Date</span></div>
+                    <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer"><i class="fas fa-utensils text-2xl mb-1"></i><span class="text-xs">Dinner</span></div>
+                    <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer"><i class="fas fa-film text-2xl mb-1"></i><span class="text-xs">Movie Night</span></div>
+                    <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer"><i class="fas fa-glass-cheers text-2xl mb-1"></i><span class="text-xs">Drinks</span></div>
+                    <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer"><i class="fas fa-shopping-bag text-2xl mb-1"></i><span class="text-xs">Shopping</span></div>
+                    <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer"><i class="fas fa-gamepad text-2xl mb-1"></i><span class="text-xs">Gaming</span></div>
+                </div>
+                <button class="w-full bg-red-500 text-white py-3 rounded-lg font-bold mt-auto" onclick="navigateToAuth('signup-seller-price-page')">Next</button>
+            </div>
+            <div id="signup-seller-price-page" class="page p-6 flex-col">
+                <h1 class="text-2xl font-bold mt-8">Set your price</h1><p class="text-gray-500 mb-6">This is the price for one booking.</p>
+                <div class="relative flex-grow flex items-center">
+                    <span class="absolute left-4 text-gray-500 text-2xl">$</span>
+                    <input type="number" placeholder="150" class="w-full text-center text-4xl font-bold border rounded-lg py-4 focus:outline-none focus:ring-2 focus:ring-red-400">
+                    <span class="absolute right-4 text-gray-500 text-2xl">USD</span>
+                </div>
+                <button class="w-full bg-red-500 text-white py-3 rounded-lg font-bold mt-auto" onclick="login()">Finish & Start</button>
+            </div>
+             <div id="signup-buyer-photos-page" class="page p-6 flex-col">
+                 <h1 class="text-2xl font-bold mt-8">Upload a photo</h1><p class="text-gray-500 mb-6">Add a photo so others can see you.</p>
+                 <div class="flex-grow flex items-center justify-center">
+                    <div class="w-48 h-48 bg-gray-200 rounded-full flex items-center justify-center"><i class="fas fa-plus text-gray-400 text-4xl"></i></div>
+                 </div>
+                 <button class="w-full bg-red-500 text-white py-3 rounded-lg font-bold mt-auto" onclick="login()">Start Swiping</button>
+            </div>
+        </div>
+
+        <!-- ===== Main App Wrapper (after login) ===== -->
+        <div id="main-app-wrapper" class="hidden h-full flex flex-col">
+            <div id="main-content" class="flex-grow overflow-y-auto">
+                <div id="swipe-page" class="page flex-col">
+                    <header class="flex-shrink-0 flex items-center justify-between border-b p-4"><h1 class="text-2xl font-bold text-red-500">MeaKa</h1></header>
+                    <main id="swipe-area" class="relative flex-grow flex items-center justify-center my-2 p-2">
+                         <div id="card-stack" class="relative w-full h-full"></div>
+                         <div id="no-more-cards" class="absolute text-center text-gray-500 hidden"><i class="fas fa-ghost text-6xl text-gray-300"></i><h2 class="text-2xl font-bold mt-4">All caught up!</h2><p>Come back later.</p></div>
+                    </main>
+                    <footer class="flex-shrink-0 flex items-center justify-evenly p-2"><button class="bg-white text-gray-500 w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl transform hover:scale-110"><i class="fas fa-undo"></i></button><button id="dislike-btn" class="bg-white text-red-500 w-16 h-16 rounded-full shadow-lg flex items-center justify-center text-3xl transform hover:scale-110"><i class="fas fa-times"></i></button><button id="superlike-btn" class="bg-white text-blue-500 w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl transform hover:scale-110"><i class="fas fa-star"></i></button><button id="like-btn" class="bg-white text-green-500 w-16 h-16 rounded-full shadow-lg flex items-center justify-center text-3xl transform hover:scale-110"><i class="fas fa-heart"></i></button><button id="boost-btn" class="bg-white text-purple-500 w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl transform hover:scale-110"><i class="fas fa-bolt"></i></button></footer>
+                </div>
+                <div id="orders-page" class="page flex-col"><header class="flex-shrink-0 flex items-center border-b p-4"><h1 class="text-2xl font-bold text-gray-800">MeaKa</h1></header>
+                    <div class="p-4 space-y-4 flex-grow flex flex-col">
+                        <div class="flex border-b"><button id="matches-tab-btn" class="font-bold py-2 px-4 border-b-2 border-red-500 text-red-500">Matches</button><button id="likes-tab-btn" class="font-bold py-2 px-4 text-gray-500">Likes <span class="text-xs bg-yellow-400 text-white font-bold p-1 rounded">GOLD</span></button></div>
+                        <div id="matches-tab">
+                            <div><h2 class="font-bold text-gray-600">New Matches</h2><div id="new-matches-list" class="flex space-x-4 overflow-x-auto py-2 no-scrollbar"></div></div>
+                            <div class="flex-grow space-y-3 flex flex-col"><h2 class="font-bold text-gray-600">Conversations</h2><div id="conversations-list" class="overflow-y-auto space-y-3"></div></div>
+                        </div>
+                        <div id="likes-tab" class="hidden flex-col items-center justify-center text-center">
+                            <div class="grid grid-cols-2 gap-2 w-full max-w-xs">
+                                <div class="relative aspect-square"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400" class="w-full h-full object-cover rounded-lg blur-md"><div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center"><i class="fas fa-heart text-white text-2xl"></i></div></div>
+                                <div class="relative aspect-square"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400" class="w-full h-full object-cover rounded-lg blur-md"><div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center"><i class="fas fa-heart text-white text-2xl"></i></div></div>
+                            </div>
+                            <h2 class="font-bold text-xl mt-4">See who likes you</h2><p class="text-gray-500">Upgrade to Gold to see more!</p><button class="bg-yellow-400 text-white font-bold py-2 px-6 mt-2 rounded-full">Get MeaKa Gold</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="favorites-page" class="page flex-col">
+                    <header class="flex-shrink-0 flex items-center border-b p-4"><h1 class="text-2xl font-bold text-gray-800">MeaKa</h1></header>
+                    <div class="p-4 space-y-4 flex-grow flex flex-col">
+                        <div class="bg-gray-200 p-1 rounded-full flex text-center font-bold text-sm"><button id="fav-like-tab-btn" class="fav-tab-btn active w-1/2 py-1 rounded-full">Like</button><button id="fav-booked-tab-btn" class="fav-tab-btn w-1/2 py-1 rounded-full">Booked</button></div>
+                        <div id="liked-profiles-grid" class="fav-tab-content active flex-grow overflow-y-auto grid-cols-2 gap-4"></div>
+                        <div id="booked-profiles-grid" class="fav-tab-content flex-grow overflow-y-auto grid-cols-2 gap-4"></div>
+                    </div>
+                </div>
+                
+                <div id="profile-page" class="page flex-col items-center p-6 space-y-6">
+                    <div class="relative"><img id="profile-page-img" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format=fit=crop&w=880&q=80" class="w-40 h-40 rounded-full object-cover shadow-lg border-4 border-white"></div>
+                    <h2 id="profile-page-name" class="text-3xl font-bold">Your Name</h2>
+                    <div class="w-full space-y-3">
+                         <button class="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-semibold flex items-center justify-center space-x-3" onclick="navigateToSubPage('edit-profile-page')"><i class="fas fa-pencil-alt"></i><span>Edit Profile</span></button>
+                         <button class="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-semibold flex items-center justify-center space-x-3" onclick="navigateToSubPage('settings-page')"><i class="fas fa-cog"></i><span>Settings</span></button>
+                    </div>
+                    <button class="w-full bg-red-500 text-white py-3 mt-auto rounded-lg font-bold" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div id="sub-page-content" class="hidden h-full">
+                <div id="edit-profile-page" class="page flex-col p-4 space-y-4">
+                     <header class="flex items-center justify-between"><button onclick="navigateTo('profile-page', document.querySelector('[data-icon=user]'))"><i class="fas fa-chevron-left"></i></button><h1 class="font-bold">Edit Profile</h1><button class="text-red-500 font-bold">Done</button></header>
+                     <div class="overflow-y-auto space-y-4">
+                        <h2 class="font-bold text-gray-500 text-sm">PHOTOS</h2>
+                        <div class="grid grid-cols-3 gap-2">
+                           <div class="bg-gray-200 aspect-square rounded-lg flex items-center justify-center"><i class="fas fa-plus text-gray-400"></i></div>
+                           <div class="bg-gray-200 aspect-square rounded-lg"></div><div class="bg-gray-200 aspect-square rounded-lg"></div>
+                        </div>
+                        <h2 class="font-bold text-gray-500 text-sm">ABOUT ME</h2>
+                        <textarea placeholder="Write a short bio..." class="w-full px-4 py-3 border rounded-lg h-24"></textarea>
+                        <div id="edit-seller-info">
+                            <h2 class="font-bold text-gray-500 text-sm">MY AVAILABILITY</h2>
+                            <div id="availability-calendar" class="bg-gray-100 rounded-lg p-2"></div>
+                            <h2 class="font-bold text-gray-500 text-sm mt-4">SERVICES</h2>
+                            <div class="grid grid-cols-3 gap-3 my-2 text-center">
+                                <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer selected"><i class="fas fa-coffee text-2xl mb-1"></i><span class="text-xs">Coffee Date</span></div>
+                                <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer"><i class="fas fa-utensils text-2xl mb-1"></i><span class="text-xs">Dinner</span></div>
+                                <div class="service-card border-2 rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer selected"><i class="fas fa-film text-2xl mb-1"></i><span class="text-xs">Movie Night</span></div>
+                            </div>
+                             <h2 class="font-bold text-gray-500 text-sm">PRICE</h2>
+                             <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span><input type="number" value="150" class="w-full text-center border rounded-lg py-2"></div>
+                        </div>
+                     </div>
+                </div>
+
+                 <div id="settings-page" class="page flex-col">
+                    <header class="flex items-center p-4 border-b"><button onclick="navigateTo('profile-page', document.querySelector('[data-icon=user]'))"><i class="fas fa-chevron-left"></i></button><h1 class="font-bold mx-auto">Settings</h1><div class="w-4"></div></header>
+                    <div class="p-4 space-y-6 overflow-y-auto">
+                        <div class="space-y-2">
+                            <h2 class="font-bold text-gray-500 text-sm">ACCOUNT</h2>
+                            <div class="bg-gray-100 rounded-lg p-3 flex justify-between"><span>Phone Number</span><span class="text-gray-500">+855 123... <i class="fas fa-chevron-right"></i></span></div>
+                            <div class="bg-gray-100 rounded-lg p-3 flex justify-between"><span>Get Verified</span><span class="text-blue-500">Verify Now <i class="fas fa-shield-alt"></i></span></div>
+                        </div>
+                         <div class="space-y-2">
+                            <h2 class="font-bold text-gray-500 text-sm">DISCOVERY</h2>
+                            <div class="bg-gray-100 rounded-lg p-3 space-y-3 divide-y divide-gray-200">
+                                <div class="pt-2">
+                                    <div class="flex justify-between items-center"><span>Distance</span><span id="distance-value" class="text-red-500">50km</span></div>
+                                    <input id="distance-slider" type="range" min="1" max="100" value="50" class="w-full mt-2">
+                                </div>
+                                <div class="pt-3">
+                                    <div class="flex justify-between items-center"><span>Age Range</span><span id="age-range-value" class="text-red-500">20-35</span></div>
+                                    <input id="age-range-slider" type="range" min="18" max="60" value="35" class="w-full mt-2">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <h2 class="font-bold text-gray-500 text-sm">NOTIFICATIONS</h2>
+                            <div class="bg-gray-100 rounded-lg p-3 space-y-3 divide-y divide-gray-200">
+                               <label class="flex justify-between items-center pt-2"><span>New Matches</span><input type="checkbox" class="relative w-10 h-5 bg-gray-300 rounded-full appearance-none toggle-checkbox" checked></label>
+                               <label class="flex justify-between items-center pt-3"><span>Messages</span><input type="checkbox" class="relative w-10 h-5 bg-gray-300 rounded-full appearance-none toggle-checkbox" checked></label>
+                               <label class="flex justify-between items-center pt-3"><span>Super Likes</span><input type="checkbox" class="relative w-10 h-5 bg-gray-300 rounded-full appearance-none toggle-checkbox"></label>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+                <div id="conversation-page" class="page"></div>
+            </div>
+            <nav id="bottom-nav" class="w-full flex-shrink-0 flex items-center justify-around bg-white border-t p-2"><button data-icon="bookmark" class="nav-button" onclick="navigateTo('orders-page', this)"><i class="far fa-bookmark text-2xl text-gray-400"></i><span class="text-xs text-gray-500">My Orders</span></button><button data-icon="heart" class="nav-button" onclick="navigateTo('favorites-page', this)"><i class="far fa-heart text-2xl text-gray-400"></i><span class="text-xs text-gray-500">My Favorites</span></button><button data-icon="home" class="nav-button active" onclick="navigateTo('swipe-page', this)"><i class="fas fa-home text-2xl text-gray-400"></i><span class="text-xs text-gray-500">Home</span></button><button data-icon="comment" class="nav-button" onclick="window.open('https://telegram.me/', '_blank')"><i class="far fa-comment-dots text-2xl text-gray-400"></i><span class="text-xs text-gray-500">Chat with us</span></button><button data-icon="user" class="nav-button" onclick="navigateTo('profile-page', this)"><i class="far fa-user text-2xl text-gray-400"></i><span class="text-xs text-gray-500">Profile</span></button></nav>
+        </div>
+
+        <!-- Full Screen Profile Detail From Swipe -->
+        <div id="profile-detail-view" class="absolute inset-0 bg-white z-50 flex flex-col"></div>
+        
+        <div id="modal-container" class="absolute inset-0 z-50 flex-col justify-end opacity-0 pointer-events-none transition-opacity duration-300">
+            <div id="modal-backdrop" class="absolute inset-0 bg-black bg-opacity-50" onclick="closeModal()"></div>
+            <div id="modal-content" class="relative z-10 bg-white rounded-t-2xl p-4 shadow-lg w-full"></div>
+        </div>
+
+        <div id="match-overlay" class="absolute inset-0 z-50 hidden flex-col items-center justify-center p-8 text-center space-y-6"><h1 class="text-6xl font-black text-white" style="font-family: 'Inter', sans-serif; -webkit-text-stroke: 2px #ef4444;">IT'S A MATCH!</h1><p class="text-white text-lg">You and <span id="match-name" class="font-bold"></span> have liked each other.</p><div class="flex items-center space-x-4"><img id="match-my-img" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format=fit=crop&w=880&q=80" class="w-32 h-32 rounded-full object-cover border-4 border-white transform -rotate-12"><img id="match-other-img" src="" class="w-32 h-32 rounded-full object-cover border-4 border-white transform rotate-12"></div><button class="w-full bg-red-500 text-white py-3 rounded-lg font-bold" onclick="hideMatchOverlay()">Keep Swiping</button></div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const myProfile = { name: 'You', img: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80' };
+        const profiles = [
+            { id: 1, name: 'Sophia', age: 28, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2MjY&lib=rb-4.0.3&q=80&w=1080', bio: 'Loves hiking and mystery novels.', price: 150, rating: 4.8 },
+            { id: 2, name: 'James', age: 30, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2NjE&lib=rb-4.0.3&q=80&w=1080', bio: 'Just a guy looking for a good concert.', price: 120, rating: 4.5 },
+            { id: 3, name: 'Isabella', age: 25, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU2OTQ&lib=rb-4.0.3&q=80&w=1080', bio: 'Artist and dog mom.', price: 200, rating: 4.9 },
+            { id: 4, name: 'Ken', age: 29, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1583864697784-a0efc8379f70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU3NDM&lib=rb-4.0.3&q=80&w=1080', bio: 'Traveler and photographer.', price: 180, rating: 4.7 },
+            { id: 5, name: 'Chloe', age: 26, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU3NzY&lib=rb-4.0.3&q=80&w=1080', bio: 'Traveler, foodie, and film buff.', price: 165, rating: 4.6 },
+            { id: 6, name: 'Ben', age: 31, location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8fDE2NzgwOTU4MDg&lib=rb-4.0.3&q=80&w=1080', bio: 'Into fitness and finance.', price: 250, rating: 4.8 }
+        ];
+        const hotels = [
+            { id: 1, name: 'Rosewood', location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80', price: 40 },
+            { id: 2, name: 'Hyatt Regency', location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1925&q=80', price: 30 },
+            { id: 3, name: 'King Grand Boutique', location: 'Phnom Penh', img: 'https://images.unsplash.com/photo-1542314831-068cd1dbb5eb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80', price: 25 }
+        ];
+        
+        let currentUser = { type: 'buyer' }; // 'buyer' or 'seller'
+        let likedProfiles = [], bookedProfiles = [], matchedProfiles = [], currentCard = null, startX = 0, isDragging = false, currentProfileIndex = 0;
+        
+        // --- MODAL & POPUP FUNCTIONS ---
+        function openModal(content) {
+            const modalContainer = document.getElementById('modal-container');
+            const modalContent = document.getElementById('modal-content');
+            modalContent.innerHTML = content;
+            modalContainer.classList.add('active');
+        }
+        function closeModal() {
+            const modalContainer = document.getElementById('modal-container');
+            modalContainer.classList.remove('active');
+        }
+
+        function showBookingModal(profileId) {
+            const profile = profiles.find(p => p.id === profileId);
+            const today = new Date().toISOString().split('T')[0];
+            const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const content = `
+                <div class="p-2 space-y-4">
+                     <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold">Proceed to Booking</h2>
+                        <button onclick="closeModal()" class="text-gray-400 text-2xl">&times;</button>
+                     </div>
+                     <div class="flex items-center space-x-3">
+                        <img src="${profile.img}" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold">@${profile.name.toLowerCase()}</p>
+                            <p class="text-sm text-gray-500">Invoice Generator one time purchase</p>
+                        </div>
+                     </div>
+                     <p class="text-3xl font-bold">$${profile.price}</p>
+                     <div>
+                        <label class="text-sm font-semibold text-gray-500">Select date:</label>
+                        <div class="grid grid-cols-3 gap-2 text-center mt-1">
+                            <input type="date" value="${today}" class="border rounded-md p-2">
+                            <div class="border rounded-md p-2 bg-gray-100 flex items-center justify-center">1 night</div>
+                            <input type="date" value="${tomorrow}" class="border rounded-md p-2">
+                        </div>
+                     </div>
+                     <button class="w-full mt-4 bg-red-500 text-white font-bold py-3 rounded-xl" onclick="showPickAStayModal(${profile.id})">Next</button>
+                </div>
+            `;
+            openModal(content);
+        }
+
+        function showPickAStayModal(profileId) {
+            const profile = profiles.find(p => p.id === profileId);
+            let hotelHtml = '';
+            hotels.forEach(hotel => {
+                hotelHtml += `
+                    <div class="flex-shrink-0 w-40 border rounded-lg p-2 cursor-pointer hover:border-red-500">
+                        <img src="${hotel.img}" class="w-full h-20 object-cover rounded-md">
+                        <p class="font-bold mt-2">${hotel.name}</p>
+                        <p class="text-xs text-gray-500">${hotel.location}</p>
+                    </div>
+                `;
+            });
+            const content = `
+                 <div class="p-2 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold">Pick a Stay</h2>
+                        <button onclick="closeModal()" class="text-gray-400 text-2xl">&times;</button>
+                    </div>
+                     <p class="text-3xl font-bold">$${profile.price}</p>
+                     <div class="flex space-x-3 overflow-x-auto no-scrollbar py-2">${hotelHtml}</div>
+                     <button class="w-full mt-4 bg-red-500 text-white font-bold py-3 rounded-xl" onclick="showPaymentModal(${profile.id}, ${hotels[0].id})">Next</button>
+                 </div>
+            `;
+            openModal(content);
+        }
+        
+        function showPaymentModal(profileId, hotelId) {
+            const profile = profiles.find(p => p.id === profileId);
+            const hotel = hotels.find(h => h.id === hotelId);
+            const totalPrice = profile.price + hotel.price;
+            const qrData = `Payment for ${profile.name}: $${totalPrice}`;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+
+            const content = `
+                <div class="p-2 space-y-4 text-center">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold">Confirmation of Order</h2>
+                        <button onclick="closeModal()" class="text-gray-400 text-2xl">&times;</button>
+                    </div>
+                    <p class="font-bold text-5xl">${totalPrice}<span class="text-lg align-top">USD</span></p>
+                    <div class="p-4 border-2 border-dashed border-red-400 rounded-lg inline-block">
+                        <img src="${qrUrl}" alt="QR Code">
+                    </div>
+                    <button class="w-full mt-4 bg-red-500 text-white font-bold py-3 rounded-xl" onclick="confirmBooking(${profileId})">Pay</button>
+                </div>
+            `;
+            openModal(content);
+        }
+
+        function confirmBooking(profileId) {
+            const profileIndex = likedProfiles.findIndex(p => p.id === profileId);
+            if (profileIndex > -1) {
+                const [bookedProfile] = likedProfiles.splice(profileIndex, 1);
+                if (!bookedProfiles.find(p => p.id === bookedProfile.id)) {
+                    bookedProfiles.push(bookedProfile);
+                }
+            }
+            closeModal();
+            renderFavorites(); // Re-render the favorites page to update both tabs
+        }
+
+        // --- AUTH & NAVIGATION ---
+        function login() { 
+            document.getElementById('auth-wrapper').style.display = 'none'; 
+            document.getElementById('main-app-wrapper').style.display = 'flex'; 
+            navigateTo('swipe-page', document.querySelector('.nav-button[data-icon="home"]')); 
+            initializeSwipeScreen(); 
+        }
+        
+        function logout() { 
+            document.getElementById('auth-wrapper').style.display = 'flex'; 
+            document.getElementById('main-app-wrapper').style.display = 'none'; 
+            likedProfiles = []; 
+            matchedProfiles = []; 
+            bookedProfiles = [];
+            currentProfileIndex = 0; 
+            document.getElementById('card-stack').innerHTML = ''; 
+            navigateToAuth('login-page'); 
+        }
+        
+        function navigateToAuth(pageId) { 
+            document.querySelectorAll('#auth-wrapper .page').forEach(page => page.classList.remove('active')); 
+            document.querySelector(`#auth-wrapper #${pageId}`).classList.add('active'); 
+        }
+        
+        function selectUserType(type) {
+            currentUser.type = type;
+            if (type === 'buyer') {
+                navigateToAuth('signup-buyer-photos-page');
+            } else {
+                navigateToAuth('signup-seller-photos-page');
+            }
+        }
+
+        function navigateTo(pageId, navButton) { 
+            document.getElementById('sub-page-content').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            
+            document.querySelectorAll('#main-content .page').forEach(page => page.classList.remove('active')); 
+            document.getElementById(pageId).classList.add('active'); 
+            
+            document.querySelectorAll('.nav-button').forEach(btn => { 
+                btn.classList.remove('active'); 
+                const icon = btn.querySelector('i'); 
+                if (btn.dataset.icon !== 'home') { 
+                    icon.classList.remove('fas'); 
+                    icon.classList.add('far'); 
+                } 
+            }); 
+            
+            if (navButton) { 
+                navButton.classList.add('active'); 
+                const activeIcon = navButton.querySelector('i'); 
+                activeIcon.classList.remove('far'); 
+                activeIcon.classList.add('fas'); 
+            } 
+            
+            if (pageId === 'favorites-page') renderFavorites(); 
+            if (pageId === 'orders-page') renderOrders(); 
+        }
+
+        function navigateToSubPage(pageId) {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('sub-page-content').style.display = 'block';
+
+            document.querySelectorAll('#sub-page-content .page').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(pageId);
+            targetPage.classList.add('active');
+
+            if (pageId === 'edit-profile-page') {
+                const sellerInfo = document.getElementById('edit-seller-info');
+                if (currentUser.type === 'seller') {
+                    sellerInfo.style.display = 'block';
+                } else {
+                    sellerInfo.style.display = 'none';
+                }
+            }
+        }
+        
+        function navigateToConversation(profileId) { 
+            const profile = profiles.find(p => p.id === profileId); 
+            if (!profile) return; 
+            
+            document.getElementById('main-content').style.display = 'none';
+            const subPageContainer = document.getElementById('sub-page-content');
+            subPageContainer.style.display = 'block';
+
+            const convoPage = document.getElementById('conversation-page'); 
+            convoPage.innerHTML = `
+                <header class="flex-shrink-0 flex items-center p-4 border-b space-x-3 bg-white">
+                    <button onclick="navigateTo('orders-page', document.querySelector('.nav-button[data-icon=bookmark]'))"><i class="fas fa-chevron-left text-gray-600"></i></button>
+                    <img src="${profile.img}" class="w-10 h-10 rounded-full object-cover">
+                    <h2 class="font-bold">${profile.name}</h2>
+                </header>
+                <main class="flex-grow p-4 space-y-4 overflow-y-auto bg-gray-100">
+                    <div class="flex justify-end"><div class="bg-red-500 text-white p-3 rounded-lg max-w-xs shadow">Hey! We matched!</div></div>
+                    <div class="flex justify-start"><div class="bg-white p-3 rounded-lg max-w-xs shadow">Oh hey! Cool photos :)</div></div>
+                </main>
+                <footer class="flex-shrink-0 flex items-center p-2 border-t bg-white">
+                    <input type="text" placeholder="Type a message..." class="w-full px-4 py-2 border rounded-full focus:outline-none bg-gray-100">
+                    <button class="ml-2 text-red-500 text-2xl"><i class="fas fa-paper-plane"></i></button>
+                </footer>`; 
+            
+            document.querySelectorAll('#sub-page-content .page').forEach(p => p.classList.remove('active'));
+            convoPage.classList.add('active');
+        }
+        
+        // --- UI & RENDERING ---
+        function showMatchOverlay(profile) { 
+            document.getElementById('match-name').innerText = profile.name; 
+            document.getElementById('match-other-img').src = profile.img; 
+            document.getElementById('match-overlay').style.display = 'flex'; 
+        }
+        
+        function hideMatchOverlay() { 
+            document.getElementById('match-overlay').style.display = 'none'; 
+        }
+        
+        function renderFavorites() { 
+            const likedGrid = document.getElementById('liked-profiles-grid'); 
+            const bookedGrid = document.getElementById('booked-profiles-grid');
+            likedGrid.innerHTML = '';
+            bookedGrid.innerHTML = '';
+
+            if (likedProfiles.length === 0) { 
+                likedGrid.innerHTML = '<p class="col-span-2 text-center text-gray-500">Profiles you like will appear here.</p>'; 
+            } else {
+                likedProfiles.forEach(profile => { 
+                    const card = document.createElement('div'); 
+                    card.className = 'relative rounded-lg overflow-hidden shadow-md'; 
+                    card.innerHTML = `<img src="${profile.img}" class="w-full h-64 object-cover"><div class="absolute bottom-0 w-full p-2 bg-gradient-to-t from-black/80 to-transparent"><p class="text-white font-bold">${profile.name} (${profile.age})</p><p class="text-white text-xs">${profile.location}</p><div class="flex justify-between items-center mt-1"><span class="text-white font-bold">$${profile.price}</span><button class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full" onclick="showBookingModal(${profile.id})">Book</button></div></div>`; 
+                    likedGrid.appendChild(card); 
+                }); 
+            }
+            
+            if (bookedProfiles.length === 0) {
+                bookedGrid.innerHTML = '<p class="col-span-2 text-center text-gray-500">Your booked dates will appear here.</p>'; 
+            } else {
+                 bookedProfiles.forEach(profile => { 
+                    const card = document.createElement('div'); 
+                    card.className = 'relative rounded-lg overflow-hidden shadow-md'; 
+                    card.innerHTML = `<img src="${profile.img}" class="w-full h-64 object-cover"><div class="absolute bottom-0 w-full p-2 bg-gradient-to-t from-black/80 to-transparent"><p class="text-white font-bold">${profile.name} (${profile.age})</p><p class="text-white text-xs">${profile.location}</p><div class="flex justify-end items-center mt-1"><button class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full" onclick="showBookingModal(${profile.id})">Rebook</button></div></div>`; 
+                    bookedGrid.appendChild(card); 
+                });
+            }
+        }
+        
+        function renderOrders() { 
+            const newMatchesList = document.getElementById('new-matches-list'); 
+            const conversationsList = document.getElementById('conversations-list'); 
+            newMatchesList.innerHTML = ''; 
+            conversationsList.innerHTML = ''; 
+            if (matchedProfiles.length === 0) { 
+                newMatchesList.innerHTML = '<p class="text-center text-gray-500 w-full">No new matches.</p>';
+                conversationsList.innerHTML = '<p class="text-center text-gray-500 mt-8">No conversations yet.</p>'; 
+                return; 
+            } 
+            matchedProfiles.forEach(profile => { 
+                const matchCard = document.createElement('div'); 
+                matchCard.className = 'flex-shrink-0 text-center cursor-pointer'; 
+                matchCard.innerHTML = `<img src="${profile.img}" class="w-20 h-20 rounded-full object-cover border-2 border-red-400"><p class="text-sm font-semibold mt-1">${profile.name}</p>`; 
+                matchCard.onclick = () => navigateToConversation(profile.id); 
+                newMatchesList.appendChild(matchCard); 
+                const convoItem = document.createElement('div'); 
+                convoItem.className = 'flex items-center p-2 bg-gray-50 rounded-lg space-x-4 cursor-pointer hover:bg-gray-100'; 
+                convoItem.innerHTML = `<img src="${profile.img}" class="w-16 h-16 object-cover rounded-full"><div class="flex-grow"><p class="font-bold">${profile.name}</p><p class="text-sm text-gray-500">You matched! Say hello.</p></div><i class="fas fa-chevron-right text-gray-300"></i>`; 
+                convoItem.onclick = () => navigateToConversation(profile.id); 
+                conversationsList.appendChild(convoItem); 
+            }); 
+        }
+        
+        // --- SWIPE LOGIC ---
+        function swipeCard(direction) { 
+            if (!currentCard) return; 
+            if(direction === 'superlike') console.log('Super like!');
+
+            const profile = profiles[currentProfileIndex]; 
+            if (direction === 'right' || direction === 'superlike') { 
+                if (!likedProfiles.find(p => p.id === profile.id)) likedProfiles.push(profile); 
+                if (profile.id % 2 === 0) { 
+                    if (!matchedProfiles.find(p => p.id === profile.id)) { 
+                        matchedProfiles.push(profile); 
+                        showMatchOverlay(profile); 
+                    } 
+                } 
+            } 
+            const endX = (direction === 'left' ? -window.innerWidth : window.innerWidth) * 1.5; 
+            currentCard.classList.add('card-transition'); 
+            currentCard.style.transform = `translateX(${endX}px) rotate(${direction === 'left' ? -30 : 30}deg)`; 
+            setTimeout(() => { 
+                if (currentCard) currentCard.remove(); 
+                currentProfileIndex++; 
+                loadNextCard(); 
+            }, 300); 
+        }
+        
+        function initializeSwipeScreen() { 
+            const cardStack = document.getElementById('card-stack'); 
+            const noMoreCardsEl = document.getElementById('no-more-cards'); 
+            cardStack.innerHTML = ''; 
+            currentProfileIndex = 0; // Reset index when re-initializing
+            if (profiles.length > 0) { 
+                noMoreCardsEl.classList.add('hidden'); 
+                loadNextCard(); 
+            } else { 
+                noMoreCardsEl.classList.remove('hidden'); 
+            } 
+        }
+        
+        function createCard(profile) { 
+            const card = document.createElement('div'); 
+            card.className = 'card absolute w-full h-full bg-white rounded-xl shadow-lg cursor-grab'; 
+            card.innerHTML = `<div class="relative w-full h-full"><img src="${profile.img}" alt="${profile.name}" class="w-full h-full object-cover rounded-xl"><div class="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent rounded-b-xl"><h2 class="text-white text-3xl font-bold">${profile.name} <span class="font-normal">${profile.age}</span></h2><p class="text-white text-sm">${profile.bio}</p></div><div class="swipe-indicator like">Like</div><div class="swipe-indicator nope">Nope</div></div>`; 
+            card.addEventListener('click', (e) => {
+                if(!isDragging) {
+                     showSwipeProfileDetail(profile.id);
+                }
+            });
+            return card; 
+        }
+        
+        function loadNextCard() { 
+            const cardStack = document.getElementById('card-stack'); 
+            const noMoreCardsEl = document.getElementById('no-more-cards'); 
+            if (currentProfileIndex >= profiles.length) { 
+                noMoreCardsEl.classList.remove('hidden'); 
+                currentCard = null; 
+                return; 
+            } 
+            noMoreCardsEl.classList.add('hidden'); 
+            const profile = profiles[currentProfileIndex]; 
+            currentCard = createCard(profile); 
+            cardStack.appendChild(currentCard); 
+            currentCard.addEventListener('mousedown', onDragStart); 
+            currentCard.addEventListener('touchstart', onDragStart, { passive: true }); 
+        }
+        
+        function onDragStart(e) { 
+            isDragging = false;
+            setTimeout(() => isDragging = true, 150); // Small delay to differentiate click from drag
+            if (!currentCard) return; 
+            currentCard.classList.remove('card-transition'); 
+            startX = e.clientX ?? e.touches[0].clientX; 
+            document.addEventListener('mousemove', onDragMove); 
+            document.addEventListener('mouseup', onDragEnd); 
+            document.addEventListener('touchmove', onDragMove, { passive: true }); 
+            document.addEventListener('touchend', onDragEnd); 
+        }
+        
+        function onDragMove(e) { 
+            if (!isDragging || !currentCard) return; 
+            const currentX = e.clientX ?? e.touches[0].clientX; 
+            const deltaX = currentX - startX; 
+            const opacity = Math.min(Math.abs(deltaX) / (window.innerWidth / 4), 1); 
+            const likeIndicator = currentCard.querySelector('.like'); 
+            const nopeIndicator = currentCard.querySelector('.nope'); 
+            if (deltaX > 0) { 
+                likeIndicator.style.opacity = opacity; 
+                nopeIndicator.style.opacity = 0; 
+            } else { 
+                nopeIndicator.style.opacity = opacity; 
+                likeIndicator.style.opacity = 0; 
+            } 
+            currentCard.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.1}deg)`; 
+        }
+        
+        function onDragEnd(e) { 
+            if (!isDragging || !currentCard) return; 
+            const deltaX = (e.clientX ?? e.changedTouches[0]?.clientX ?? startX) - startX;
+            if (Math.abs(deltaX) > window.innerWidth / 3) { 
+                swipeCard(deltaX > 0 ? 'right' : 'left'); 
+            } else { 
+                snapCardBack(); 
+            } 
+            document.removeEventListener('mousemove', onDragMove); 
+            document.removeEventListener('mouseup', onDragEnd); 
+            document.removeEventListener('touchmove', onDragMove); 
+            document.removeEventListener('touchend', onDragEnd);
+            setTimeout(() => isDragging = false, 200);
+        }
+        
+        function snapCardBack() { 
+            if (!currentCard) return; 
+            currentCard.classList.add('card-transition'); 
+            currentCard.style.transform = 'translateX(0) rotate(0deg)'; 
+            currentCard.querySelector('.like').style.opacity = 0; 
+            currentCard.querySelector('.nope').style.opacity = 0; 
+        }
+
+        function showSwipeProfileDetail(profileId) {
+            const profile = profiles.find(p => p.id === profileId);
+            if(!profile) return;
+            const detailView = document.getElementById('profile-detail-view');
+            detailView.innerHTML = `
+                <div class="flex-grow overflow-y-auto no-scrollbar">
+                    <div class="relative">
+                        <img src="${profile.img}" class="w-full h-[70vh] object-cover">
+                        <button onclick="hideSwipeProfileDetail()" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 w-8 h-8 rounded-full">&times;</button>
+                    </div>
+                    <div class="p-4 space-y-2">
+                         <h2 class="text-3xl font-bold">${profile.name}, <span class="font-light">${profile.age}</span> <i class="fas fa-check-circle text-blue-500"></i></h2>
+                         <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2"></i>${profile.location}</p>
+                         <p class="pt-2">${profile.bio}</p>
+                         <div class="flex items-center space-x-2"><div class="bg-yellow-400 p-1 rounded-full"><i class="fas fa-star text-white"></i></div><span>${profile.rating}</span></div>
+                    </div>
+                </div>
+            `;
+            detailView.classList.add('active');
+        }
+
+        function hideSwipeProfileDetail() {
+            document.getElementById('profile-detail-view').classList.remove('active');
+        }
+
+        function activateBoost() {
+            openModal(`
+                <div class="text-center p-4 space-y-4">
+                    <i class="fas fa-bolt text-4xl text-purple-500"></i>
+                    <h2 class="text-xl font-bold">Boost Your Profile?</h2>
+                    <p class="text-gray-600">Be a top profile in your area for 30 minutes to get more matches.</p>
+                    <button class="w-full bg-purple-500 text-white font-bold py-3 rounded-xl" onclick="startBoost()">Yes, Boost Me</button>
+                    <button class="w-full text-gray-500 font-bold" onclick="closeModal()">No Thanks</button>
+                </div>
+            `);
+        }
+
+        function startBoost() {
+            closeModal();
+            const appContainer = document.getElementById('app-container');
+            appContainer.classList.add('boost-active');
+            setTimeout(() => {
+                appContainer.classList.remove('boost-active');
+            }, 30000); // 30 seconds for simulation
+        }
+        
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('login-btn').addEventListener('click', login);
+            document.getElementById('like-btn').addEventListener('click', () => { if (currentCard) swipeCard('right'); });
+            document.getElementById('dislike-btn').addEventListener('click', () => { if (currentCard) swipeCard('left'); });
+            document.getElementById('superlike-btn').addEventListener('click', () => { if (currentCard) swipeCard('superlike'); });
+            document.getElementById('boost-btn').addEventListener('click', activateBoost);
+            
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.addEventListener('click', () => card.classList.toggle('selected'));
+            });
+
+            document.getElementById('matches-tab-btn').addEventListener('click', (e) => {
+                document.getElementById('matches-tab').style.display = 'block';
+                document.getElementById('likes-tab').style.display = 'none';
+                e.target.classList.add('border-red-500', 'text-red-500');
+                document.getElementById('likes-tab-btn').classList.remove('border-red-500', 'text-red-500');
+            });
+            document.getElementById('likes-tab-btn').addEventListener('click', (e) => {
+                document.getElementById('likes-tab').style.display = 'flex';
+                document.getElementById('matches-tab').style.display = 'none';
+                e.target.classList.add('border-red-500', 'text-red-500');
+                document.getElementById('matches-tab-btn').classList.remove('border-red-500', 'text-red-500');
+            });
+
+             document.getElementById('fav-like-tab-btn').addEventListener('click', (e) => {
+                document.getElementById('liked-profiles-grid').classList.add('active');
+                document.getElementById('booked-profiles-grid').classList.remove('active');
+                e.target.classList.add('active');
+                document.getElementById('fav-booked-tab-btn').classList.remove('active');
+            });
+            document.getElementById('fav-booked-tab-btn').addEventListener('click', (e) => {
+                document.getElementById('booked-profiles-grid').classList.add('active');
+                document.getElementById('liked-profiles-grid').classList.remove('active');
+                e.target.classList.add('active');
+                document.getElementById('fav-like-tab-btn').classList.remove('active');
+            });
+            
+            const distanceSlider = document.getElementById('distance-slider');
+            const distanceValue = document.getElementById('distance-value');
+            distanceSlider.addEventListener('input', (e) => distanceValue.textContent = `${e.target.value}km`);
+
+            navigateToAuth('login-page');
+        });
+    </script>
+</body>
+</html>
