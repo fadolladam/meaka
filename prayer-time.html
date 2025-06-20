@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KhmerNote - ម៉ោងបន់ស្រន់</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter (UI) + Suwannaphum (Khmer Article Font) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Suwannaphum:wght@100;300;400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+    }
+
+    .suwannaphum {
+      font-family: 'Suwannaphum', serif;
+    }
+
+    .suwannaphum-light {
+      font-family: 'Suwannaphum', serif;
+      font-weight: 300;
+    }
+
+    .suwannaphum-regular {
+      font-family: 'Suwannaphum', serif;
+      font-weight: 400;
+    }
+
+    .suwannaphum-bold {
+      font-family: 'Suwannaphum', serif;
+      font-weight: 700;
+    }
+
+    .suwannaphum-black {
+      font-family: 'Suwannaphum', serif;
+      font-weight: 900;
+    }
+
+    /* Custom styles for active prayer highlight */
+    .prayer-item.current-prayer {
+      background-color: #e0f2fe; /* Light blue for highlight */
+      border-left: 5px solid #2563eb; /* Blue border */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Styles for the active navigation icon */
+    .nav-item.active {
+        color: #2563eb; /* Blue text for active icon */
+    }
+
+    /* Ensure main content doesn't get hidden by the fixed footer */
+    body {
+      padding-bottom: 72px; /* Adjust this value based on your footer height */
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- HEADER - Reused from your news app -->
+  <header class="bg-white shadow-sm py-4 px-4 sm:px-6 lg:px-8 flex items-center relative z-10">
+    <div class="flex items-center">
+      <!-- You can keep or remove the menu button if not needed -->
+      <button class="text-gray-600 focus:outline-none md:hidden mr-4">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+    </div>
+    <div class="absolute left-1/2 -translate-x-1/2 flex items-center">
+      <img src="https://scontent.fpnh9-1.fna.fbcdn.net/v/t39.30808-6/311999261_659402089156169_3698811190426210172_n.png?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGJIur_Kg8cGzkD23nxSKBgRlZjretdmSlGVmOt612ZKZPktv7QlnixGPoZtTzUysyoAUofoScCx7efHRyWnXyB&_nc_ohc=toP0OLnLVOwQ7kNvwFW_SGf&_nc_oc=AdmmYhOrBuLSsC7dQUWwt8SSvuOfOpV8U3emoQWnhjCXIpsRWNgvbD9n4wsHhhaS0Ns&_nc_zt=23&_nc_ht=scontent.fpnh9-1.fna&_nc_gid=39KMuSC-SvfaWG08Bh0d5A&oh=00_AfOtQ-oPJasLmxlb3TBl0FqyQYdeXvYiyZk53PzflKhSTQ&oe=685B5E03" alt="Logo" class="h-8 w-8 rounded-full">
+      <span class="ml-2 text-xl font-bold text-gray-800">ម៉ោងបន់ស្រន់</span>
+    </div>
+    <div class="flex items-center ml-auto">
+      <!-- Search button, removed for prayer times as it's not relevant here -->
+    </div>
+  </header>
+
+  <!-- MAIN Content for Prayer Times -->
+  <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col items-center">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6 mb-6 text-center">
+      <h2 id="current-location" class="text-2xl font-bold text-gray-900 mb-2 suwannaphum">ទីក្រុងភ្នំពេញ, កម្ពុជា</h2>
+      <p id="current-date" class="text-gray-600 text-lg suwannaphum-regular">ថ្ងៃសុក្រ, មិថុនា 20, 2025</p>
+    </div>
+
+    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6 mb-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 suwannaphum">ម៉ោងបន់ស្រន់ថ្ងៃនេះ</h3>
+      <div id="prayer-times-list" class="space-y-3">
+        <!-- Prayer times will be injected here by JavaScript -->
+        <div id="loading-prayer-times" class="text-center text-gray-500 text-lg py-4">កំពុងផ្ទុកម៉ោងបន់ស្រន់...</div>
+        <div id="error-prayer-times" class="text-center text-red-500 text-lg py-4 hidden">បរាជ័យក្នុងការផ្ទុកម៉ោងបន់ស្រន់.</div>
+      </div>
+    </div>
+
+    <div class="max-w-md w-full bg-blue-600 text-white rounded-lg shadow-md p-6 text-center">
+      <h3 class="text-xl font-semibold mb-2 suwannaphum">ម៉ោងបន់ស្រន់បន្ទាប់</h3>
+      <p id="next-prayer-name" class="text-3xl font-bold mb-1 suwannaphum"></p>
+      <p id="time-remaining" class="text-4xl font-extrabold suwannaphum-black"></p>
+    </div>
+  </main>
+
+  <!-- Sticky Bottom Navigation -->
+  <footer class="fixed bottom-0 left-0 right-0 w-full bg-white shadow-lg py-3 px-4 z-40">
+    <nav class="flex justify-around items-center h-full">
+      <!-- Home Icon -->
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+        <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        <span class="text-xs font-medium">ទំព័រដើម</span>
+      </a>
+
+      <!-- Prayer Icon (Active) -->
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200 active">
+        <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span class="text-xs font-medium">ម៉ោងបន់ស្រន់</span>
+      </a>
+
+      <!-- Dua Icon -->
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+        <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11.586 11.586m-2.828-2.828a4 4 0 014-4h2.828" />
+        </svg>
+        <span class="text-xs font-medium">ឌូអា</span>
+      </a>
+
+      <!-- Donation Icon -->
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+        <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.602 9.539L10.912 3.16a.75.75 0 00-.776-.057L.302 9.072A1.5 1.5 0 001.5 11.25h14.777l-.602 3.011-.274 1.37a.75.75 0 00.728.91l2.433-.487a.75.75 0 00.91-.728L18.428 10.37a.75.75 0 00-.826-.831z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.602 9.539L10.912 3.16a.75.75 0 00-.776-.057L.302 9.072A1.5 1.5 0 001.5 11.25h14.777l-.602 3.011-.274 1.37a.75.75 0 00.728.91l2.433-.487a.75.75 0 00.91-.728L18.428 10.37a.75.75 0 00-.826-.831z" clip-rule="evenodd"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11a4 4 0 110-8 4 4 0 010 8z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-xs font-medium">បរិច្ចាគ</span>
+      </a>
+
+      <!-- News Icon -->
+      <a href="news.html" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+        <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-3m-6 0h6" />
+        </svg>
+        <span class="text-xs font-medium">ព័ត៌មាន</span>
+      </a>
+    </nav>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const currentLocationEl = document.getElementById('current-location');
+      const currentDateEl = document.getElementById('current-date');
+      const prayerTimesList = document.getElementById('prayer-times-list');
+      const loadingPrayerTimes = document.getElementById('loading-prayer-times');
+      const errorPrayerTimes = document.getElementById('error-prayer-times');
+      const nextPrayerNameEl = document.getElementById('next-prayer-name');
+      const timeRemainingEl = document.getElementById('time-remaining');
+
+      // API Configuration
+      const API_BASE_URL = 'https://api.aladhan.com/v1/timingsByCity';
+      const CITY = 'Phnom Penh';
+      const COUNTRY = 'Cambodia';
+      const CALCULATION_METHOD = 2; // 2: University of Islamic Sciences, Karachi (common)
+
+      let prayerTimesToday = null; // Stores today's fetched prayer times
+      let countdownInterval = null; // To store the interval for the countdown
+
+      // Prayer names in Khmer and their order
+      const PRAYER_ORDER = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+      const PRAYER_NAMES_KHMER = {
+        'Fajr': 'ហ្វ័ជរ៍',
+        'Sunrise': 'ស៊ុរូក',
+        'Dhuhr': 'ឌូហ័រ',
+        'Asr': 'អ័ស្រ្ព',
+        'Maghrib': 'ម៉ាហ្គ្រីប',
+        'Isha': 'អ៊ីស្ហាក់'
+      };
+
+      /**
+       * Converts 24-hour time string (HH:MM) to a Date object for today.
+       * @param {string} timeString - Time in HH:MM format.
+       * @returns {Date} Date object for today with the specified time.
+       */
+      const parseTimeToDate = (timeString) => {
+        const [hours, minutes] = timeString.split(':').map(Number);
+        const now = new Date();
+        now.setHours(hours, minutes, 0, 0); // Set hours, minutes, seconds, milliseconds
+        return now;
+      };
+
+      /**
+       * Formats milliseconds into HH:MM:SS format.
+       * @param {number} ms - Milliseconds.
+       * @returns {string} Formatted time string.
+       */
+      const formatMillisecondsToHMS = (ms) => {
+        const totalSeconds = Math.floor(ms / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        return [hours, minutes, seconds]
+          .map(unit => String(unit).padStart(2, '0'))
+          .join(':');
+      };
+
+      /**
+       * Updates the countdown display and highlights the current prayer.
+       */
+      const updateCountdownAndHighlight = () => {
+        if (!prayerTimesToday) return;
+
+        const now = new Date();
+        let nextPrayer = null;
+        let timeToNextPrayerMs = -1;
+        let currentPrayer = null;
+
+        // Collect all prayer times as Date objects for comparison
+        const prayersWithDates = PRAYER_ORDER.map(prayer => ({
+          name: prayer,
+          khmerName: PRAYER_NAMES_KHMER[prayer],
+          time: prayerTimesToday.timings[prayer],
+          date: parseTimeToDate(prayerTimesToday.timings[prayer])
+        }));
+
+        // Sort prayers chronologically
+        prayersWithDates.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+        // Find the next prayer and current prayer
+        for (let i = 0; i < prayersWithDates.length; i++) {
+          const prayerDate = prayersWithDates[i].date;
+          if (prayerDate > now) {
+            nextPrayer = prayersWithDates[i];
+            timeToNextPrayerMs = nextPrayer.date.getTime() - now.getTime();
+            currentPrayer = prayersWithDates[i - 1] || prayersWithDates[prayersWithDates.length - 1]; // Previous prayer or last if it's past midnight
+            break;
+          }
+        }
+
+        // If no future prayers today, assume next prayer is Fajr tomorrow
+        if (!nextPrayer) {
+            const fajrTomorrow = parseTimeToDate(prayerTimesToday.timings['Fajr']);
+            fajrTomorrow.setDate(fajrTomorrow.getDate() + 1); // Set to tomorrow's Fajr
+            nextPrayer = {
+              name: 'Fajr',
+              khmerName: PRAYER_NAMES_KHMER['Fajr'],
+              time: prayerTimesToday.timings['Fajr'],
+              date: fajrTomorrow
+            };
+            timeToNextPrayerMs = nextPrayer.date.getTime() - now.getTime();
+            currentPrayer = prayersWithDates[prayersWithDates.length - 1]; // Current prayer is the last one of today
+        }
+
+
+        // Update UI
+        if (nextPrayer) {
+          nextPrayerNameEl.textContent = nextPrayer.khmerName;
+          timeRemainingEl.textContent = formatMillisecondsToHMS(timeToNextPrayerMs);
+        } else {
+          nextPrayerNameEl.textContent = 'No more prayers today.';
+          timeRemainingEl.textContent = '--:--:--';
+        }
+
+        // Highlight current prayer in the list
+        document.querySelectorAll('.prayer-item').forEach(item => {
+          item.classList.remove('current-prayer');
+          const prayerName = item.dataset.prayerName;
+          if (currentPrayer && prayerName === currentPrayer.name) {
+            item.classList.add('current-prayer');
+          }
+        });
+      };
+
+      /**
+       * Renders the prayer times fetched from the API.
+       * @param {object} timings - Prayer timings object from Aladhan API.
+       * @param {object} date - Date object for the prayer times.
+       */
+      const renderPrayerTimes = (timings, date) => {
+        prayerTimesList.innerHTML = ''; // Clear previous entries
+        errorPrayerTimes.classList.add('hidden'); // Hide any error messages
+
+        // FIX: Reformat date.gregorian.date to 'YYYY-MM-DD' for reliable Date object creation
+        const [day, month, year] = date.gregorian.date.split('-');
+        const reliableDateString = `${year}-${month}-${day}`;
+        
+        currentDateEl.textContent = new Date(reliableDateString).toLocaleDateString('km-KH', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        currentLocationEl.textContent = `${CITY}, ${COUNTRY}`;
+
+        PRAYER_ORDER.forEach(prayer => {
+          const time = timings[prayer];
+          if (time) {
+            const prayerNameKhmer = PRAYER_NAMES_KHMER[prayer] || prayer; // Fallback to English name if not found
+            const prayerItem = document.createElement('div');
+            prayerItem.className = 'prayer-item flex justify-between items-center bg-gray-50 p-3 rounded-md';
+            prayerItem.dataset.prayerName = prayer; // Store original prayer name for highlighting
+
+            prayerItem.innerHTML = `
+              <span class="text-gray-700 font-medium text-lg suwannaphum">${prayerNameKhmer}</span>
+              <span class="text-gray-900 font-semibold text-lg">${time}</span>
+            `;
+            prayerTimesList.appendChild(prayerItem);
+          }
+        });
+
+        // Start countdown and highlighting
+        clearInterval(countdownInterval); // Clear any existing interval
+        countdownInterval = setInterval(updateCountdownAndHighlight, 1000);
+        updateCountdownAndHighlight(); // Initial call
+      };
+
+      /**
+       * Fetches prayer times from the Aladhan API.
+       */
+      const fetchPrayerTimes = async () => {
+        loadingPrayerTimes.classList.remove('hidden');
+        prayerTimesList.innerHTML = ''; // Clear content during loading
+        errorPrayerTimes.classList.add('hidden'); // Hide error on new fetch
+
+        try {
+          const response = await fetch(`${API_BASE_URL}?city=${CITY}&country=${COUNTRY}&method=${CALCULATION_METHOD}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+
+          if (data.code === 200 && data.status === 'OK' && data.data) {
+            prayerTimesToday = data.data;
+            renderPrayerTimes(prayerTimesToday.timings, prayerTimesToday.date);
+          } else {
+            throw new Error(data.status || 'Failed to retrieve prayer times.');
+          }
+        } catch (error) {
+          console.error('Error fetching prayer times:', error);
+          errorPrayerTimes.classList.remove('hidden');
+          errorPrayerTimes.textContent = 'បរាជ័យក្នុងការផ្ទុកម៉ោងបន់ស្រន់។ សូម​ព្យាយាម​ម្ដង​ទៀត​នៅ​ពេល​ក្រោយ។'; // Khmer for "Failed to load prayer times. Please try again later."
+          prayerTimesList.innerHTML = ''; // Clear list on error
+        } finally {
+          loadingPrayerTimes.classList.add('hidden');
+        }
+      };
+
+      // Initial fetch of prayer times
+      fetchPrayerTimes();
+    });
+  </script>
+</body>
+</html>
