@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Hub - Sticky Header & Lazy Load News</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and overall body */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            display: flex;
+            flex-direction: column; /* Arrange content vertically */
+            justify-content: flex-start;
+            align-items: center; /* Center content horizontally */
+            min-height: 100vh;
+            padding: 0; /* Remove body padding to allow sticky header to reach top edge */
+            box-sizing: border-box;
+        }
+
+        /* Container for the main content areas */
+        .content-container {
+            width: 100%;
+            max-width: 600px; /* Max width for better readability on large screens */
+            background-color: #ffffff; /* White background for the content area */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            padding: 20px; /* Internal padding for the news content */
+            box-sizing: border-box;
+            margin-bottom: 20px; /* Space below the content container */
+            margin-top: 20px; /* Space below the sticky header */
+        }
+
+        /* Sticky header for the image */
+        .sticky-header {
+            width: 100%;
+            background-color: #ffffff; /* White background for the header */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Slightly lighter shadow for header */
+            position: sticky; /* Make the header stick */
+            top: 0; /* Stick to the top of the viewport */
+            z-index: 1000; /* Ensure it stays on top of other content */
+            padding: 10px 0; /* Padding around the image */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom-left-radius: 10px; /* Match body container radius */
+            border-bottom-right-radius: 10px; /* Match body container radius */
+        }
+
+        /* Image styling within the sticky header */
+        .sticky-header img {
+            width: auto; /* Allow image to size naturally */
+            max-width: 500px; /* Max width for the image */
+            height: 150px; /* Fixed height for the image */
+            object-fit: contain; /* Ensure the whole image is visible */
+            border-radius: 8px; /* Rounded corners for the image */
+        }
+
+        /* Styles for dummy news articles with thumbnail */
+        .news-article-thumb {
+            display: flex; /* Use flexbox for side-by-side layout */
+            align-items: flex-start; /* Align items to the top */
+            border-bottom: 1px solid #e2e8f0; /* Light gray line separates articles */
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+
+        .news-article-thumb:last-child {
+            border-bottom: none; /* No border for the last article */
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .news-thumbnail {
+            flex-shrink: 0; /* Prevent thumbnail from shrinking */
+            width: 80px; /* Fixed width for thumbnail */
+            height: 80px; /* Fixed height for thumbnail */
+            border-radius: 8px; /* Rounded corners for thumbnail */
+            object-fit: cover; /* Ensure image covers the area without distortion */
+            margin-right: 16px; /* Space between thumbnail and text */
+        }
+
+        .news-content {
+            flex-grow: 1; /* Allow content to take remaining space */
+        }
+
+        /* Loading indicator styles */
+        .loading-indicator {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2em;
+            color: #666;
+            display: none; /* Hidden by default */
+        }
+
+        .loading-indicator.show {
+            display: block; /* Show when active */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Header for Website Logo Image -->
+    <div class="sticky-header">
+        <a href="https://example.com/news" target="_blank" rel="noopener noreferrer"
+           class="block">
+            <img
+                src="https://placehold.co/500x150/ADD8E6/FFFFFF?text=Website+News+Logo"
+                alt="News Website Logo"
+            >
+        </a>
+    </div>
+
+    <!-- Main Content Container for News -->
+    <div class="content-container">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Latest News Headlines</h2>
+
+        <!-- Container where news articles will be loaded -->
+        <div id="news-articles-container">
+            <!-- Initial dummy news articles will be loaded here by JavaScript -->
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="loading-indicator">
+            Loading more news...
+        </div>
+    </div>
+
+    <p class="text-gray-500 text-sm mt-4 text-center">
+        Dummy news content generated for demonstration. Styling by Tailwind CSS.
+    </p>
+
+    <script>
+        const newsContainer = document.getElementById('news-articles-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        let articleCount = 0; // To keep track of the number of articles loaded
+        const articlesPerLoad = 5; // Number of articles to load each time
+
+        // Function to generate dummy news articles
+        function generateDummyArticle(index) {
+            const colors = ['90EE90', 'FFD700', 'FFA07A', 'ADD8E6', 'E6B0C4', '9ACD32', '87CEEB', 'DA70D6', 'F08080', '20B2AA'];
+            const titles = [
+                "Local Park Renovation Project Approved",
+                "Tech Innovations Drive Economic Growth",
+                "Community Garden Initiative Flourishes",
+                "Future of Remote Work Discussed at Summit",
+                "New Art Exhibition Opens Downtown",
+                "Sustainable Energy Project Nears Completion",
+                "City Marathon Sees Record Participation",
+                "Breakthrough in Renewable Battery Technology",
+                "Historical Landmark Restoration Underway",
+                "Culinary Festival Kicks Off This Weekend"
+            ];
+            const snippets = [
+                "The city council has given the green light to the comprehensive renovation of Central Park, promising new recreational facilities and enhanced green spaces for residents.",
+                "A new report indicates that advancements in artificial intelligence and sustainable technology are significant contributors to the current economic upswing, attracting new investments.",
+                "Local residents celebrate the success of the new community garden, which has fostered a stronger sense of community and provided fresh produce for many households.",
+                "Experts from various industries convened to debate the long-term implications and benefits of remote work models, predicting a hybrid approach for most sectors.",
+                "A vibrant new exhibition featuring contemporary local artists has officially opened at the City Gallery, drawing large crowds on its opening weekend.",
+                "The ambitious solar farm project on the outskirts of the city is almost complete, promising a significant boost to the region's renewable energy capacity.",
+                "Thousands of runners took to the streets for the annual city marathon, marking the highest participation rate in the event's history.",
+                "Scientists announce a major stride in energy storage, with a new battery prototype showing unprecedented efficiency and longevity.",
+                "Work has begun on restoring the historic old town hall, aiming to preserve its architectural heritage for future generations.",
+                "Food enthusiasts gather as the annual culinary festival begins, showcasing local produce and innovative dishes from top chefs."
+            ];
+            const date = new Date();
+            date.setDate(date.getDate() - index); // Simulate older dates for older articles
+            const formattedDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+            return `
+                <div class="news-article-thumb">
+                    <img src="https://placehold.co/80x80/${colors[index % colors.length]}/FFFFFF?text=T${index + 1}" alt="Article Thumbnail" class="news-thumbnail">
+                    <div class="news-content">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-1">${titles[index % titles.length]} (Article ${index + 1})</h3>
+                        <p class="text-sm text-gray-500 mb-1">${formattedDate}</p>
+                        <p class="text-gray-700 text-sm">
+                            ${snippets[index % snippets.length]}
+                        </p>
+                        <a href="#" class="text-blue-600 hover:underline text-sm mt-1 block">Read More</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to load more articles
+        function loadMoreArticles() {
+            loadingIndicator.classList.add('show'); // Show loading indicator
+
+            // Simulate network request delay
+            setTimeout(() => {
+                for (let i = 0; i < articlesPerLoad; i++) {
+                    const newArticle = generateDummyArticle(articleCount);
+                    newsContainer.insertAdjacentHTML('beforeend', newArticle);
+                    articleCount++;
+                }
+                loadingIndicator.classList.remove('show'); // Hide loading indicator
+            }, 1000); // 1 second delay
+        }
+
+        // Intersection Observer for lazy loading
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // If the loading indicator is visible and we're not already loading
+                if (entry.isIntersecting && !loadingIndicator.classList.contains('show')) {
+                    loadMoreArticles();
+                }
+            });
+        }, {
+            root: null, // Observe relative to the viewport
+            rootMargin: '0px', // No extra margin
+            threshold: 0.1 // Trigger when 10% of the indicator is visible
+        });
+
+        // Initial load of articles when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load an initial set of articles so there's content to scroll
+            for (let i = 0; i < 10; i++) { // Load 10 articles initially
+                const newArticle = generateDummyArticle(articleCount);
+                newsContainer.insertAdjacentHTML('beforeend', newArticle);
+                articleCount++;
+            }
+            // Start observing the loading indicator after initial content is loaded
+            observer.observe(loadingIndicator);
+        });
+
+    </script>
+
+</body>
+</html>
