@@ -1,120 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KhmerNote</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
-        }
-        /* Custom scrollbar for horizontal category filter */
-        .category-filter::-webkit-scrollbar {
-            height: 4px;
-        }
-        .category-filter::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 2px;
-        }
-        .category-filter::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 2px;
-        }
-        .category-filter::-webkit-scrollbar-thumb:hover {
-            background: #555;
-            border-radius: 2px;
-        }
-        /* Fade-in animation for articles */
-        .article-item {
-            opacity: 0;
-            animation: fadeIn 0.5s forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KhmerNote</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter (UI) + Suwannaphum (Khmer Article Font) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Suwannaphum:wght@100;300;400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+    }
+
+    .suwannaphum {
+      font-family: 'Suwannaphum', serif;
+    }
+
+    .suwannaphum-light {
+      font-family: 'Suwannaphum', serif;
+      font-weight: 300;
+    }
+
+    .suwannaphum-regular {
+      font-family: 'Suwannaphum', serif;
+      font-weight: 400;
+    }
+
+    .suwannaphum-bold {
+      font-family: 'Suwannaphum', serif;
+      font-weight: 700;
+    }
+
+    .suwannaphum-black {
+      font-family: 'Suwannaphum', serif;
+      font-weight: 900;
+    }
+
+    .category-filter::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .category-filter::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 2px;
+    }
+
+    .category-filter::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 2px;
+    }
+
+    .category-filter::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .article-item {
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-white shadow-sm py-4 px-4 sm:px-6 lg:px-8 flex items-center relative z-10">
-        <div class="flex items-center">
-            <!-- Mobile menu button -->
-            <button class="text-gray-600 focus:outline-none md:hidden mr-4">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
-            </button>
-        </div>
 
-        <!-- Centered Logo and Title -->
-        <div class="absolute left-1/2 -translate-x-1/2 flex items-center">
-            <img src="https://placehold.co/40x40/FF0000/FFFFFF?text=K" alt="Logo" class="h-8 w-8 rounded-full">
-            <span class="ml-2 text-xl font-bold text-gray-800">ខ្មែរណូត</span>
-        </div>
-
-        <div class="flex items-center ml-auto">
-            <!-- Search button -->
-            <button class="text-gray-600 focus:outline-none">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-            </button>
-        </div>
-    </header>
-
-    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <!-- Category Filter -->
-        <div class="category-filter flex space-x-4 overflow-x-auto whitespace-nowrap pb-2">
-            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-red-600 text-white shadow-md active-category" data-category="all">ALL</button>
-            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="national">ព័ត៌មានជាតិ</button>
-            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="international">ព័ត៌មេនអន្តរជាតិ</button>
-            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="technology">បច្ចេកវិទ្យា</button>
-            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="sports">កីឡា</button>
-            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="arts">សិល្បៈ</button>
-        </div>
-
-        <!-- Article Container - now smaller -->
-        <div class="max-w-2xl mx-auto mt-4"> <!-- Added mt-4 for consistent spacing -->
-            <div id="article-container" class="grid gap-6">
-                <div id="loading-message" class="text-center text-gray-500 text-lg py-10">Loading news...</div>
-                <div id="error-message" class="text-center text-red-500 text-lg py-10 hidden">Failed to load news. Please check the Google Sheet setup and your internet connection.</div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Article Detail Modal -->
-    <!-- Adjusted top-0 to top-16 (or similar) to account for header height -->
-    <div id="article-detail-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden" aria-hidden="true">
-        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[calc(90vh-4rem)] overflow-y-auto relative mt-16 md:mt-0">
-            <!-- Close button -->
-            <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none z-50">
-                <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-
-            <!-- Modal Content -->
-            <div class="p-6 pt-10"> <!-- Added padding-top to ensure content doesn't get hidden by the close button -->
-                <img id="detail-image" src="" alt="Article Image" class="w-full h-64 object-cover rounded-md mb-4">
-                <span id="detail-tag" class="text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block"></span>
-                <h2 id="detail-title" class="text-2xl font-bold text-gray-900 mb-2"></h2>
-                <div class="flex items-center text-sm text-gray-500 mb-4">
-                    <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <span id="detail-date"></span>
-                </div>
-                <div id="detail-content" class="prose max-w-none text-gray-800 leading-relaxed">
-                    <!-- Detailed content will be loaded here -->
-                </div>
-                <div id="loading-detail" class="text-center text-gray-500 text-md py-4 hidden">Generating full article...</div>
-                <div id="error-detail" class="text-center text-red-500 text-md py-4 hidden">Failed to load detailed content.</div>
-            </div>
-        </div>
+  <!-- HEADER (unchanged) -->
+  <header class="bg-white shadow-sm py-4 px-4 sm:px-6 lg:px-8 flex items-center relative z-10">
+    <div class="flex items-center">
+      <button class="text-gray-600 focus:outline-none md:hidden mr-4">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
     </div>
+    <div class="absolute left-1/2 -translate-x-1/2 flex items-center">
+      <img src="https://placehold.co/40x40/FF0000/FFFFFF?text=K" alt="Logo" class="h-8 w-8 rounded-full">
+      <span class="ml-2 text-xl font-bold text-gray-800">ខ្មែរណូត</span>
+    </div>
+    <div class="flex items-center ml-auto">
+      <button class="text-gray-600 focus:outline-none">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN (partial - only article section shown) -->
+  <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="category-filter flex space-x-4 overflow-x-auto whitespace-nowrap pb-2">
+      <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-red-600 text-white shadow-md active-category" data-category="all">ALL</button>
+      <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="national">ព័ត៌មានជាតិ</button>
+      <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="international">អន្តរជាតិ</button>
+      <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="technology">បច្ចេកវិទ្យា</button>
+      <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="sports">កីឡា</button>
+      <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="arts">សិល្បៈ</button>
+    </div>
+
+    <div class="max-w-2xl mx-auto mt-4">
+      <div id="article-container" class="grid gap-6">
+        <div id="loading-message" class="text-center text-gray-500 text-lg py-10">Loading news...</div>
+        <div id="error-message" class="text-center text-red-500 text-lg py-10 hidden">Failed to load news.</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ARTICLE DETAIL MODAL -->
+  <div id="article-detail-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden" aria-hidden="true">
+    <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[calc(90vh-4rem)] overflow-y-auto relative mt-16 md:mt-0">
+      <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none z-50">
+        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="p-6 pt-10">
+        <img id="detail-image" src="" alt="Article Image" class="w-full h-64 object-cover rounded-md mb-4" />
+        <span id="detail-tag" class="text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block"></span>
+        <h2 id="detail-title" class="text-2xl font-bold text-gray-900 mb-2"></h2>
+        <div class="flex items-center text-sm text-gray-500 mb-4">
+          <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span id="detail-date"></span>
+        </div>
+
+        <!-- ✅ Suwannaphum font applied here -->
+        <div id="detail-content" class="prose max-w-none text-gray-800 leading-relaxed suwannaphum"></div>
+
+        <div id="loading-detail" class="text-center text-gray-500 text-md py-4 hidden">Generating full article...</div>
+        <div id="error-detail" class="text-center text-red-500 text-md py-4 hidden">Failed to load detailed content.</div>
+      </div>
+    </div>
+  </div>
 
     <script>
         // *** IMPORTANT: Replace this with your Google Apps Script Web App URL ***
@@ -334,7 +368,7 @@ const fetchAndDisplayArticles = async () => {
                             detailContent.innerHTML = ''; // Clear existing content
 
                             if (article.fullContent) {
-                                detailContent.innerHTML = article.fullContent.replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
+                                detailContent.innerHTML = article.fullContent.replace(/\n/g, '<br><br>');
                                 loadingDetail.classList.add('hidden');
                             } else {
                                 const generatedContent = await generateDetailedContent(article.title, article.description);
@@ -386,5 +420,6 @@ const fetchAndDisplayArticles = async () => {
             });
         });
     </script>
+</body>
 </body>
 </html>
