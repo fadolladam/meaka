@@ -54,15 +54,17 @@
     </header>
 
     <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="category-filter flex space-x-4 overflow-x-auto whitespace-nowrap mb-6 pb-2">
+<div class="category-filter flex space-x-4 overflow-x-auto whitespace-nowrap mb-6 pb-2">
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-red-600 text-white shadow-md active-category" data-category="all">ALL</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="national">ព័ត៌មានជាតិ</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="international">ព័ត៌មានអន្តរជាតិ</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="technology">បច្ចេកវិទ្យា</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="sports">កីឡា</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="arts">សិល្បៈ</button>
+            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="business">ធុរកិច្ច</button>
+            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="health">សុខភាព</button>
+            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="education">អប់រំ</button>
         </div>
-
         <div id="article-container" class="grid gap-6">
             <div id="loading-message" class="text-center text-gray-500 text-lg py-10">Loading news...</div>
             <div id="error-message" class="text-center text-red-500 text-lg py-10 hidden">Failed to load news. Please check the Google Sheet setup and your internet connection.</div>
