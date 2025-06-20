@@ -16,7 +16,8 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
+      background-color: #f0f2f5; /* Light gray background for the entire page */
+      padding-bottom: 80px; /* Increased padding to accommodate sticky footer */
     }
 
     .suwannaphum {
@@ -43,115 +44,186 @@
       font-weight: 900;
     }
 
-    /* Custom styles for active prayer highlight */
-    .prayer-item.current-prayer {
-      background-color: #e0f2fe; /* Light blue for highlight */
-      border-left: 5px solid #2563eb; /* Blue border */
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    /* Styles for the blue dot next to the active/next prayer time */
+    .blue-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #1a73e8; /* Blue color */
+      border-radius: 50%;
+      margin-left: 8px; /* Space from the time */
+      vertical-align: middle;
     }
 
     /* Styles for the active navigation icon */
     .nav-item.active {
-        color: #2563eb; /* Blue text for active icon */
-    }
-
-    /* Ensure main content doesn't get hidden by the fixed footer */
-    body {
-      padding-bottom: 72px; /* Adjust this value based on your footer height */
+        color: #1a73e8; /* Deeper blue for active icon */
     }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- HEADER - Reused from your news app -->
-  <header class="bg-white shadow-sm py-4 px-4 sm:px-6 lg:px-8 flex items-center relative z-10">
-    <div class="flex items-center">
-      <button class="text-gray-600 focus:outline-none md:hidden mr-4">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-        </svg>
-      </button>
+  <!-- TOP BAR / HEADER - Reimagined based on image -->
+  <header class="bg-white py-3 px-4 shadow-sm flex justify-between items-center relative z-10 text-gray-800 font-semibold text-lg">
+    <div class="flex items-center text-sm">
+      <span id="current-hour-minute" class="font-bold">10:12</span>
+      <svg class="h-4 w-4 ml-1 text-gray-500" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.001 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1 17h-2v-6h2v6zm1-10c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1z"/>
+      </svg>
+      <!-- Placeholder for WiFi/Signal strength -->
+      <svg class="h-4 w-4 ml-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.24-.964M4.5 12C4.5 7.582 8.53 4 13.5 4c1.691 0 3.246.336 4.607.935"></path>
+      </svg>
+      <!-- Placeholder for Battery -->
+      <svg class="h-4 w-4 ml-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 4v.01M6 19l2-2m0 0l4-4 4 4 2 2M3 19h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
     </div>
-    <div class="absolute left-1/2 -translate-x-1/2 flex items-center">
-      <img src="https://scontent.fpnh9-1.fna.fbcdn.net/v/t39.30808-6/311999261_659402089156169_3698811190426210172_n.png?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGJIur_Kg8cGzkD23nxSKBgRlZjretdmSlGVmOt612ZKZPktv7QlnixGPoZtTzUysyoAUofoScCx7efHRyWnXyB&_nc_ohc=toP0OLnLVOwQ7kNvwFW_SGf&_nc_oc=AdmmYhOrBuLSsC7dQUWwt8SSvuOfOpV8U3emoQWnhjCXIpsRWNgvbD9n4wsHhhaS0Ns&_nc_zt=23&_nc_ht=scontent.fpnh9-1.fna&_nc_gid=39KMuSC-SvfaWG08Bh0d5A&oh=00_AfOtQ-oPJasLmxlb3TBl0FqyQYdeXvYiyZk53PzflKhSTQ&oe=685B5E03" alt="Logo" class="h-8 w-8 rounded-full">
-      <span class="ml-2 text-xl font-bold text-gray-800">ព័ត៌មានឥស្លាមកម្ពុជា</span>
+    <div class="text-center flex-grow">
+      <span id="current-date-header" class="text-gray-800 font-semibold text-base">Fri, June 20, 2025</span>
     </div>
-    <div class="flex items-center ml-auto">
-      <button class="text-gray-600 focus:outline-none">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </button>
+    <div class="flex items-center space-x-3">
+      <!-- Volume Icon -->
+      <svg class="h-6 w-6 text-gray-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464A9 9 0 0012 3C7.029 3 3 7.029 3 12s4.029 9 9 9a8.988 8.988 0 007.536-3.964M12 21V3m0 0l3 3m-3-3l-3 3"></path>
+      </svg>
+      <!-- Share Icon -->
+      <svg class="h-6 w-6 text-gray-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.882 13.2 9 13.068 9 12.5v-1a.5.5 0 00-.096-.288l-.723-.723.723-.723A.5.5 0 009 9.5v-1c0-.568-.118-.7-.282-.842m6.566 0c.164.142.282.274.282.842v1c0 .568-.118.7-.282.842M12 12v.01"></path>
+      </svg>
     </div>
   </header>
 
   <!-- MAIN Content for Prayer Times -->
   <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col items-center">
-    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6 mb-6 text-center">
-      <h2 id="current-location" class="text-2xl font-bold text-gray-900 mb-2 suwannaphum"></h2>
-      <p id="current-date" class="text-gray-600 text-lg suwannaphum-regular"></p>
+    <!-- Location and Date Card (Enhanced and Condensed) -->
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl py-3 px-6 mb-6 flex justify-between items-center">
+      <h2 id="current-location" class="text-base font-bold text-gray-900 suwannaphum"></h2>
+      <p id="current-date" class="text-sm text-gray-600 suwannaphum-regular"></p>
     </div>
 
-    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6 mb-6">
-      <h3 class="text-xl font-semibold text-gray-800 mb-4 suwannaphum">ម៉ោងសឡាត៍ថ្ងៃនេះ</h3>
-      <div id="prayer-times-list" class="space-y-3">
+    <!-- Prayer Times List Card (Enhanced) -->
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-6 mb-6">
+      <div id="prayer-times-list" class="space-y-4"> <!-- Increased space-y for list items -->
         <!-- Prayer times will be injected here by JavaScript -->
         <div id="loading-prayer-times" class="text-center text-gray-500 text-lg py-4">កំពុងផ្ទុកម៉ោងសឡាត៍...</div>
         <div id="error-prayer-times" class="text-center text-red-500 text-lg py-4 hidden">បរាជ័យក្នុងការផ្ទុកម៉ោងសឡាត៍.</div>
-        <div id="location-permission-message" class="text-center text-gray-500 text-sm py-2 hidden">Please allow location access to get accurate prayer times.</div>
+        <div id="location-permission-message" class="text-center text-gray-500 text-sm py-2 hidden"></div>
+      </div>
+      <!-- Dots indicator -->
+      <div class="flex justify-center mt-6 space-x-2">
+        <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
       </div>
     </div>
 
-    <div class="max-w-md w-full bg-blue-600 text-white rounded-lg shadow-md p-6 text-center">
-      <h3 class="text-xl font-semibold mb-2 suwannaphum">ម៉ោងសឡាត៍បន្ទាប់</h3>
-      <p id="next-prayer-name" class="text-3xl font-bold mb-1 suwannaphum"></p>
-      <p id="time-remaining" class="text-4xl font-extrabold suwannaphum-black"></p>
+    <!-- Removed the redundant next prayer countdown block as per the reference image -->
+    <!-- The previous code had a specific countdown block. The new UI implies the blue dot
+         in the prayer list is the primary indicator of the next prayer. -->
+
+    <!-- Additional Cards (Simulating from image) -->
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-4 mb-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+        <div class="flex items-center">
+            <svg class="h-6 w-6 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="text-gray-800 font-medium suwannaphum-regular">Your prayer logs are moved here</span>
+        </div>
+        <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
     </div>
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-4 mb-6 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+        <div class="flex items-center">
+            <svg class="h-6 w-6 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="text-gray-800 font-medium suwannaphum-regular">Monthly Timetable</span>
+        </div>
+        <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+    </div>
+
+    <!-- Settings Cards -->
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-4 mb-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+        <div>
+            <h4 class="text-gray-800 font-medium suwannaphum-regular">Juristik Method</h4>
+            <p class="text-sm text-gray-500">Shafi/Maliki/Hanbali</p>
+        </div>
+        <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+    </div>
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-4 mb-6 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+        <div>
+            <h4 class="text-gray-800 font-medium suwannaphum-regular">Calculation Method</h4>
+            <p class="text-sm text-gray-500">Muslim World League (18.0°,17.0°)</p>
+        </div>
+        <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+    </div>
+
+    <!-- Ad Banner Placeholder -->
+    <div class="max-w-md w-full bg-blue-100 border border-blue-200 rounded-lg p-3 text-center text-blue-800 text-sm mb-6 flex items-center justify-between">
+      <div class="flex items-center">
+        <img src="https://placehold.co/32x32/FFD700/000000?text=Trip" alt="Trip.com Logo" class="h-8 w-8 rounded-md mr-2">
+        <div>
+          <p class="font-bold text-base">Trip.com</p>
+          <p class="text-xs">App Store</p>
+        </div>
+      </div>
+      <button class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold text-sm hover:bg-blue-700 transition-colors duration-200">Get</button>
+    </div>
+
   </main>
 
   <!-- Sticky Bottom Navigation -->
-  <footer class="fixed bottom-0 left-0 right-0 w-full bg-white shadow-lg py-3 px-4 z-40">
+  <footer class="fixed bottom-0 left-0 right-0 w-full bg-white shadow-2xl py-4 px-4 z-40 rounded-t-xl">
     <nav class="flex justify-around items-center h-full">
       <!-- Home Icon -->
-      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200 p-2">
         <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
         </svg>
-        <span class="text-xs font-medium">ទំព័រដើម</span>
+        <span class="text-xs font-medium suwannaphum-regular">ទំព័រដើម</span>
       </a>
 
       <!-- Prayer Icon (Active) -->
-      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200 active">
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200 active p-2">
         <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <span class="text-xs font-medium">ម៉ោងសឡាត៍</span>
+        <span class="text-xs font-medium suwannaphum-regular">ម៉ោងសឡាត៍</span>
       </a>
 
-      <!-- Dua Icon -->
-      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+      <!-- Al Quran Icon -->
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200 p-2">
+        <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6a2 2 0 110-4 2 2 0 010 4zm0 0v14"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 12l-2 2-2-2"></path>
+        </svg>
+        <span class="text-xs font-medium suwannaphum-regular">អាល់គូរអាន</span>
+      </a>
+
+      <!-- Duas Icon -->
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200 p-2">
         <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11.586 11.586m-2.828-2.828a4 4 0 014-4h2.828" />
         </svg>
-        <span class="text-xs font-medium">ឌូអា</span>
+        <span class="text-xs font-medium suwannaphum-regular">ឌូអា</span>
       </a>
 
-      <!-- Donation Icon -->
-      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+      <!-- More Icon -->
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200 p-2">
         <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.602 9.539L10.912 3.16a.75.75 0 00-.776-.057L.302 9.072A1.5 1.5 0 001.5 11.25h14.777l-.602 3.011-.274 1.37a.75.75 0 00.728.91l2.433-.487a.75.75 0 00.91-.728L18.428 10.37a.75.75 0 00-.826-.831z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.602 9.539L10.912 3.16a.75.75 0 00-.776-.057L.302 9.072A1.5 1.5 0 001.5 11.25h14.777l-.602 3.011-.274 1.37a.75.75 0 00.728.91l2.433-.487a.75.75 0 00.91-.728L18.428 10.37a.75.75 0 00-.826-.831z" clip-rule="evenodd"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11a4 4 0 110-8 4 4 0 010 8z" clip-rule="evenodd"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
-        <span class="text-xs font-medium">បរិច្ចាគ</span>
-      </a>
-
-      <!-- News Icon -->
-      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
-        <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-3m-6 0h6" />
-        </svg>
-        <span class="text-xs font-medium">ព័ត៌មាន</span>
+        <span class="text-xs font-medium suwannaphum-regular">ច្រើនទៀត</span>
       </a>
     </nav>
   </footer>
@@ -163,31 +235,43 @@
       const prayerTimesList = document.getElementById('prayer-times-list');
       const loadingPrayerTimes = document.getElementById('loading-prayer-times');
       const errorPrayerTimes = document.getElementById('error-prayer-times');
-      const locationPermissionMessage = document.getElementById('location-permission-message'); // New element
-      const nextPrayerNameEl = document.getElementById('next-prayer-name');
-      const timeRemainingEl = document.getElementById('time-remaining');
+      const locationPermissionMessage = document.getElementById('location-permission-message');
+      const currentHourMinuteEl = document.getElementById('current-hour-minute');
+      const currentDateHeaderEl = document.getElementById('current-date-header');
 
       // API Configuration
-      // Changed API_BASE_URL_COORDS to use the correct endpoint structure with timestamp
       const API_BASE_URL_COORDS = 'https://api.aladhan.com/v1/timings'; 
-      const API_BASE_URL_CITY = 'https://api.aladhan.com/v1/timingsByCity'; // Fallback endpoint
-      const DEFAULT_CITY = 'Phnom Penh'; // Default if geolocation fails
-      const DEFAULT_COUNTRY = 'Cambodia'; // Default if geolocation fails
+      const API_BASE_URL_CITY = 'https://api.aladhan.com/v1/timingsByCity';
+      const DEFAULT_CITY = 'Phnom Penh';
+      const DEFAULT_COUNTRY = 'Cambodia';
       const CALCULATION_METHOD = 2; // 2: University of Islamic Sciences, Karachi (common)
 
-      let prayerTimesToday = null; // Stores today's fetched prayer times
-      let countdownInterval = null; // To store the interval for the countdown
+      let prayerTimesToday = null; 
+      let countdownInterval = null; 
 
-      // Prayer names in Khmer and their order
-      const PRAYER_ORDER = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+      // Prayer names in Khmer and their order (including Qiyam for UI consistency)
+      const PRAYER_ORDER = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha', 'Qiyam']; // Added Qiyam
       const PRAYER_NAMES_KHMER = {
         'Fajr': 'ហ្វ័ជរ៍',
         'Sunrise': 'ស៊ុរូក',
         'Dhuhr': 'ឌូហ័រ',
         'Asr': 'អ័ស្រ្ព',
         'Maghrib': 'ម៉ាហ្គ្រីប',
-        'Isha': 'អ៊ីស្ហាក់'
+        'Isha': 'អ៊ីស្ហាក់',
+        'Qiyam': 'កិយាម' // Khmer for Qiyam
       };
+
+      // Icons for each prayer time as inline SVG paths for consistency with image
+      const PRAYER_ICONS = {
+        'Fajr': '<svg class="h-5 w-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>', // Sun with rays
+        'Sunrise': '<svg class="h-5 w-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h1m16 0h1M5.636 18.364l.707-.707M18.364 5.636l.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>', // Sun
+        'Dhuhr': '<svg class="h-5 w-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>', // Sun at Zenith
+        'Asr': '<svg class="h-5 w-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>', // Sun at an angle
+        'Maghrib': '<svg class="h-5 w-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>', // Crescent moon
+        'Isha': '<svg class="h-5 w-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>', // Darker crescent moon
+        'Qiyam': '<svg class="h-5 w-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>' // Crescent moon for Qiyam
+      };
+
 
       /**
        * Converts 24-hour time string (HH:MM) to a Date object for today.
@@ -197,7 +281,7 @@
       const parseTimeToDate = (timeString) => {
         const [hours, minutes] = timeString.split(':').map(Number);
         const now = new Date();
-        now.setHours(hours, minutes, 0, 0); // Set hours, minutes, seconds, milliseconds
+        now.setHours(hours, minutes, 0, 0); 
         return now;
       };
 
@@ -218,7 +302,24 @@
       };
 
       /**
-       * Updates the countdown display and highlights the current prayer.
+       * Updates the header's current time display.
+       */
+      const updateHeaderTime = () => {
+          const now = new Date();
+          const hours = String(now.getHours()).padStart(2, '0');
+          const minutes = String(now.getMinutes()).padStart(2, '0');
+          currentHourMinuteEl.textContent = `${hours}:${minutes}`;
+
+          currentDateHeaderEl.textContent = now.toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          });
+      };
+
+      /**
+       * Updates the countdown display and highlights the next prayer.
        */
       const updateCountdownAndHighlight = () => {
         if (!prayerTimesToday) return;
@@ -226,63 +327,100 @@
         const now = new Date();
         let nextPrayer = null;
         let timeToNextPrayerMs = -1;
-        let currentPrayer = null;
-
-        // Collect all prayer times as Date objects for comparison
-        const prayersWithDates = PRAYER_ORDER.map(prayer => ({
-          name: prayer,
-          khmerName: PRAYER_NAMES_KHMER[prayer],
-          time: prayerTimesToday.timings[prayer],
-          date: parseTimeToDate(prayerTimesToday.timings[prayer])
-        }));
+        
+        // Combine real prayer times and a placeholder for Qiyam
+        const allPrayersWithDates = PRAYER_ORDER.map(prayerName => {
+            if (prayerName === 'Qiyam') {
+                // For Qiyam, we'll use a static time for now as per the image
+                // In a real app, you'd calculate this based on Isha/Fajr
+                const qiyamTime = "01:01"; // Static time from image
+                const qiyamDate = parseTimeToDate(qiyamTime);
+                // If current time is past Isha, and Qiyam is for next day
+                if (parseTimeToDate(prayerTimesToday.timings['Isha']) < now && qiyamDate < now && now.getHours() >= 0 && now.getHours() < qiyamDate.getHours() + 1) { // Basic check for Qiyam being 'next day'
+                    qiyamDate.setDate(qiyamDate.getDate() + 1);
+                }
+                return {
+                    name: prayerName,
+                    khmerName: PRAYER_NAMES_KHMER[prayerName],
+                    time: qiyamTime,
+                    date: qiyamDate
+                };
+            } else {
+                return {
+                    name: prayerName,
+                    khmerName: PRAYER_NAMES_KHMER[prayerName],
+                    time: prayerTimesToday.timings[prayerName],
+                    date: parseTimeToDate(prayerTimesToday.timings[prayerName])
+                };
+            }
+        });
 
         // Sort prayers chronologically
-        prayersWithDates.sort((a, b) => a.date.getTime() - b.date.getTime());
+        allPrayersWithDates.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-        // Find the next prayer and current prayer
-        for (let i = 0; i < prayersWithDates.length; i++) {
-          const prayerDate = prayersWithDates[i].date;
-          // Check if current time is within this prayer's time or if it's the next upcoming prayer
+        // Find the next prayer
+        for (let i = 0; i < allPrayersWithDates.length; i++) {
+          const prayerDate = allPrayersWithDates[i].date;
           if (prayerDate > now) {
-            nextPrayer = prayersWithDates[i];
+            nextPrayer = allPrayersWithDates[i];
             timeToNextPrayerMs = nextPrayer.date.getTime() - now.getTime();
-            currentPrayer = prayersWithDates[i - 1] || prayersWithDates[prayersWithDates.length - 1]; // Previous prayer or last if it's past midnight
             break;
           }
         }
 
-        // If no future prayers today, assume next prayer is Fajr tomorrow
+        // If no future prayers today (i.e., after Isha), then the next prayer is Fajr of the next day.
         if (!nextPrayer) {
-            const fajrTomorrow = parseTimeToDate(prayerTimesToday.timings['Fajr']);
-            fajrTomorrow.setDate(fajrTomorrow.getDate() + 1); // Set to tomorrow's Fajr
+            // This case is already handled correctly by `parseTimeToDate` if Fajr is earlier than 'now' on the current day,
+            // as it implicitly wraps to the next day if the time component is earlier than current time.
+            // However, to explicitly handle "next day Fajr" after all today's prayers are over:
+            const fajrTomorrowDate = parseTimeToDate(prayerTimesToday.timings['Fajr']);
+            fajrTomorrowDate.setDate(fajrTomorrowDate.getDate() + 1); // Set to tomorrow's Fajr
             nextPrayer = {
-              name: 'Fajr',
-              khmerName: PRAYER_NAMES_KHMER['Fajr'],
-              time: prayerTimesToday.timings['Fajr'],
-              date: fajrTomorrow
+                name: 'Fajr',
+                khmerName: PRAYER_NAMES_KHMER['Fajr'],
+                time: prayerTimesToday.timings['Fajr'],
+                date: fajrTomorrowDate
             };
             timeToNextPrayerMs = nextPrayer.date.getTime() - now.getTime();
-            currentPrayer = prayersWithDates[prayersWithDates.length - 1]; // Current prayer is the last one of today
         }
 
-
-        // Update UI
-        if (nextPrayer) {
-          nextPrayerNameEl.textContent = nextPrayer.khmerName;
-          timeRemainingEl.textContent = formatMillisecondsToHMS(timeToNextPrayerMs);
-        } else {
-          nextPrayerNameEl.textContent = 'No more prayers today.';
-          timeRemainingEl.textContent = '--:--:--';
-        }
-
-        // Highlight current prayer in the list
+        // Update current location and date display
+        // The image doesn't have a separate "Next Prayer" countdown block.
+        // The blue dot indicates the NEXT prayer time in the list.
+        
+        // Highlight next prayer in the list
         document.querySelectorAll('.prayer-item').forEach(item => {
           item.classList.remove('current-prayer');
+          // Remove all existing blue dots
+          const existingDot = item.querySelector('.blue-dot');
+          if (existingDot) {
+              existingDot.remove();
+          }
+
           const prayerName = item.dataset.prayerName;
-          if (currentPrayer && prayerName === currentPrayer.name) {
-            item.classList.add('current-prayer');
+          if (nextPrayer && prayerName === nextPrayer.name) {
+            // Add blue dot to the next prayer
+            const timeSpan = item.querySelector('.prayer-time');
+            if (timeSpan && !timeSpan.querySelector('.blue-dot')) { // Ensure dot isn't duplicated
+                timeSpan.insertAdjacentHTML('beforeend', '<span class="blue-dot"></span>');
+            }
+            // You can optionally add a subtle background/border to the *whole item* if you want it more noticeable
+            // item.classList.add('current-prayer'); // Add back if a background highlight is desired
           }
         });
+
+        // The separate "Next Prayer" display at the bottom needs to be handled.
+        // The image does not show this specific block, but the previous code had it.
+        // Let's decide how to integrate or remove it.
+        // Given the new UI, the blue dot is the primary indicator. The specific countdown block
+        // seems to be removed in the new design.
+        // So, I will remove the logic for `nextPrayerNameEl` and `timeRemainingEl`
+        // as they don't seem to fit the new design from the image.
+        // However, I will keep the elements in HTML commented out in case they are needed later.
+        // Or, more simply, remove them and rely entirely on the list highlighting.
+        // The user only showed the prayer list with the dot, not a separate next prayer block.
+        // Let's hide the last blue section and rely on the list's blue dot for highlighting.
+        document.getElementById('next-prayer-name').parentElement.classList.add('hidden');
       };
 
       /**
@@ -292,11 +430,10 @@
        * @param {string} locationName - Name of the detected/default location.
        */
       const renderPrayerTimes = (timings, date, locationName) => {
-        prayerTimesList.innerHTML = ''; // Clear previous entries
-        errorPrayerTimes.classList.add('hidden'); // Hide any error messages
-        locationPermissionMessage.classList.add('hidden'); // Hide permission message
+        prayerTimesList.innerHTML = ''; 
+        errorPrayerTimes.classList.add('hidden'); 
+        locationPermissionMessage.classList.add('hidden'); 
 
-        // FIX: Reformat date.gregorian.date to 'YYYY-MM-DD' for reliable Date object creation
         const [day, month, year] = date.gregorian.date.split('-');
         const reliableDateString = `${year}-${month}-${day}`;
         
@@ -308,26 +445,50 @@
         });
         currentLocationEl.textContent = locationName;
 
+        // Iterate through PRAYER_ORDER to ensure correct display sequence
         PRAYER_ORDER.forEach(prayer => {
-          const time = timings[prayer];
-          if (time) {
-            const prayerNameKhmer = PRAYER_NAMES_KHMER[prayer] || prayer; // Fallback to English name if not found
+          let time = timings[prayer];
+          let prayerNameKhmer = PRAYER_NAMES_KHMER[prayer];
+          let iconSvg = PRAYER_ICONS[prayer];
+
+          // Handle Qiyam time separately as it's not directly from API
+          if (prayer === 'Qiyam') {
+            time = "01:01 AM"; // Static time from the image for UI consistency
+            // In a real application, you might calculate Qiyam:
+            // const ishaToday = parseTimeToDate(timings['Isha']);
+            // Fetch next day's Fajr to calculate last third of the night.
+            // This would require another API call or more complex date math.
+            // For this UI replication, we keep it static.
+          }
+
+          if (time || prayer === 'Qiyam') { // Include Qiyam even if time is static
             const prayerItem = document.createElement('div');
-            prayerItem.className = 'prayer-item flex justify-between items-center bg-gray-50 p-3 rounded-md';
-            prayerItem.dataset.prayerName = prayer; // Store original prayer name for highlighting
+            prayerItem.className = 'prayer-item flex items-center justify-between bg-white p-4 rounded-lg shadow-sm'; // Removed hover for flat look
+            prayerItem.dataset.prayerName = prayer; 
 
             prayerItem.innerHTML = `
-              <span class="text-gray-700 font-medium text-lg suwannaphum">${prayerNameKhmer}</span>
-              <span class="text-gray-900 font-semibold text-lg">${time}</span>
+              <div class="flex items-center">
+                ${iconSvg}
+                <span class="text-gray-700 font-medium text-lg suwannaphum">${prayerNameKhmer}</span>
+              </div>
+              <div class="flex items-center">
+                <span class="text-gray-900 font-semibold text-lg prayer-time">${time}</span>
+                <svg class="h-5 w-5 text-blue-600 ml-3 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464A9 9 0 0012 3C7.029 3 3 7.029 3 12s4.029 9 9 9a8.988 8.988 0 007.536-3.964M12 21V3m0 0l3 3m-3-3l-3 3"></path>
+                </svg>
+              </div>
             `;
             prayerTimesList.appendChild(prayerItem);
           }
         });
 
-        // Start countdown and highlighting
-        clearInterval(countdownInterval); // Clear any existing interval
+        // Update header time immediately and then set interval
+        updateHeaderTime(); 
+        setInterval(updateHeaderTime, 60000); // Update every minute for header clock
+
+        clearInterval(countdownInterval); 
         countdownInterval = setInterval(updateCountdownAndHighlight, 1000);
-        updateCountdownAndHighlight(); // Initial call
+        updateCountdownAndHighlight(); 
       };
 
       /**
@@ -338,13 +499,12 @@
        */
       const fetchPrayerTimesData = async (lat, lon, locationText) => {
         loadingPrayerTimes.classList.remove('hidden');
-        prayerTimesList.innerHTML = ''; // Clear content during loading
-        errorPrayerTimes.classList.add('hidden'); // Hide error on new fetch
-        locationPermissionMessage.classList.add('hidden'); // Hide permission message
+        prayerTimesList.innerHTML = ''; 
+        errorPrayerTimes.classList.add('hidden'); 
+        locationPermissionMessage.classList.add('hidden'); 
 
         let apiUrl = '';
         if (lat && lon) {
-          // Get current timestamp in seconds for the correct API endpoint
           const timestamp = Math.floor(Date.now() / 1000);
           apiUrl = `${API_BASE_URL_COORDS}/${timestamp}?latitude=${lat}&longitude=${lon}&method=${CALCULATION_METHOD}`;
         } else {
@@ -360,10 +520,8 @@
 
           if (data.code === 200 && data.status === 'OK' && data.data) {
             prayerTimesToday = data.data;
-            // Use the API's returned city name if available and not using default city
-            // The timezone field in data.data.meta.timezone is like "Asia/Phnom_Penh"
             const determinedLocationName = (lat && lon && data.data.meta && data.data.meta.timezone) 
-                                           ? `${data.data.meta.timezone.split('/')[1].replace('_', ' ')}, ${data.data.meta.timezone.split('/')[0]}` // Extract city, country from timezone
+                                           ? `${data.data.meta.timezone.split('/')[1].replace(/_/g, ' ')}, ${data.data.meta.timezone.split('/')[0]}` 
                                            : locationText;
 
             renderPrayerTimes(prayerTimesToday.timings, prayerTimesToday.date, determinedLocationName);
@@ -373,8 +531,8 @@
         } catch (error) {
           console.error('Error fetching prayer times:', error);
           errorPrayerTimes.classList.remove('hidden');
-          errorPrayerTimes.textContent = 'បរាជ័យក្នុងការផ្ទុកម៉ោងសឡាត៍។ សូម​ព្យាយាម​ម្ដង​ទៀត​នៅ​ពេល​ក្រោយ។'; // Khmer for "Failed to load prayer times. Please try again later."
-          prayerTimesList.innerHTML = ''; // Clear list on error
+          errorPrayerTimes.textContent = 'បរាជ័យក្នុងការផ្ទុកម៉ោងសឡាត៍។ សូម​ព្យាយាម​ម្ដង​ទៀត​នៅ​ពេល​ក្រោយ។'; 
+          prayerTimesList.innerHTML = ''; 
         } finally {
           loadingPrayerTimes.classList.add('hidden');
         }
@@ -385,39 +543,38 @@
        */
       const getGeolocationAndFetchPrayerTimes = () => {
         if (navigator.geolocation) {
-          loadingPrayerTimes.textContent = 'កំពុងកំណត់ទីតាំងរបស់អ្នក...'; // Show locating message
-          locationPermissionMessage.classList.remove('hidden'); // Show permission prompt
+          loadingPrayerTimes.textContent = 'កំពុងកំណត់ទីតាំងរបស់អ្នក...'; 
+          locationPermissionMessage.classList.remove('hidden'); 
 
           navigator.geolocation.getCurrentPosition(
             (position) => {
               const lat = position.coords.latitude;
               const lon = position.coords.longitude;
-              fetchPrayerTimesData(lat, lon, 'ទីតាំងបច្ចុប្បន្ន'); // Use "Current Location" until API returns city
+              fetchPrayerTimesData(lat, lon, 'ទីតាំងបច្ចុប្បន្ន'); 
             },
             (error) => {
-              console.error('Geolocation error:', error.code, error.message); // Log specific error details
-              let errorMessage = 'ទីតាំងមិនអាចកំណត់បានទេ។ '; // Default message
+              console.error('Geolocation error:', error.code, error.message); 
+              let errorMessage = 'ទីតាំងមិនអាចកំណត់បានទេ។ '; 
               
               switch (error.code) {
                 case error.PERMISSION_DENIED:
-                  errorMessage += 'សូមអនុញ្ញាតការចូលប្រើទីតាំងនៅក្នុងការកំណត់កម្មវិធីរុករករបស់អ្នក។'; // "Please allow location access in your browser settings."
+                  errorMessage += 'សូមអនុញ្ញាតការចូលប្រើទីតាំងនៅក្នុងការកំណត់កម្មវិធីរុករករបស់អ្នក។'; 
                   break;
                 case error.POSITION_UNAVAILABLE:
-                  errorMessage += 'ព័ត៌មានទីតាំងមិនមានទេ។'; // "Location information is unavailable."
+                  errorMessage += 'ព័ត៌មានទីតាំងមិនមានទេ។'; 
                   break;
                 case error.TIMEOUT:
-                  errorMessage += 'ការស្នើសុំដើម្បីទទួលបានទីតាំងអ្នកប្រើប្រាស់បានអស់ពេល។'; // "The request to get user location timed out."
+                  errorMessage += 'ការស្នើសុំដើម្បីទទួលបានទីតាំងអ្នកប្រើប្រាស់បានអស់ពេល។'; 
                   break;
                 case error.UNKNOWN_ERROR:
-                  errorMessage += 'មានកំហុសមិនស្គាល់មួយបានកើតឡើង។'; // "An unknown error occurred."
+                  errorMessage += 'មានកំហុសមិនស្គាល់មួយបានកើតឡើង។'; 
                   break;
               }
-              errorMessage += ' កំពុងប្រើម៉ោងលំនាំដើមសម្រាប់ភ្នំពេញ។'; // Add fallback message
+              errorMessage += ' កំពុងប្រើម៉ោងលំនាំដើមសម្រាប់ភ្នំពេញ។'; 
 
               locationPermissionMessage.textContent = errorMessage;
               locationPermissionMessage.classList.remove('hidden');
               
-              // Fallback to default city if geolocation fails or is denied
               fetchPrayerTimesData(null, null, `${DEFAULT_CITY}, ${DEFAULT_COUNTRY}`);
             },
             {
@@ -428,13 +585,12 @@
           );
         } else {
           console.warn('Geolocation is not supported by this browser.');
-          fetchPrayerTimesData(null, null, `${DEFAULT_CITY}, ${DEFAULT_COUNTRY}`); // Fallback
-          locationPermissionMessage.textContent = 'កម្មវិធីរុករករបស់អ្នកមិនគាំទ្រទីតាំងភូមិសាស្ត្រទេ។ កំពុងប្រើម៉ោងលំនាំដើមសម្រាប់ភ្នំពេញ។'; // Khmer for "Your browser does not support geolocation. Using default times for Phnom Penh."
+          fetchPrayerTimesData(null, null, `${DEFAULT_CITY}, ${DEFAULT_COUNTRY}`); 
+          locationPermissionMessage.textContent = 'កម្មវិធីរុករករបស់អ្នកមិនគាំទ្រទីតាំងភូមិសាស្ត្រទេ។ កំពុងប្រើម៉ោងលំនាំដើមសម្រាប់ភ្នំពេញ។'; 
           locationPermissionMessage.classList.remove('hidden');
         }
       };
 
-      // Initial fetch of prayer times using geolocation
       getGeolocationAndFetchPrayerTimes();
     });
   </script>
