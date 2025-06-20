@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ព័ត៌មានឥស្លាមកម្ពុជា - ម៉ោងសឡាត៍</title>
+  <title>KhmerNote - ម៉ោងសឡាត៍</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -144,7 +144,7 @@
       </a>
 
       <!-- News Icon -->
-      <a href="news.html" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
         <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-3m-6 0h6" />
         </svg>
@@ -165,7 +165,8 @@
       const timeRemainingEl = document.getElementById('time-remaining');
 
       // API Configuration
-      const API_BASE_URL_COORDS = 'https://api.aladhan.com/v1/timingsByCoordinates'; // Changed API endpoint
+      // Changed API_BASE_URL_COORDS to use the correct endpoint structure with timestamp
+      const API_BASE_URL_COORDS = 'https://api.aladhan.com/v1/timings'; 
       const API_BASE_URL_CITY = 'https://api.aladhan.com/v1/timingsByCity'; // Fallback endpoint
       const DEFAULT_CITY = 'Phnom Penh'; // Default if geolocation fails
       const DEFAULT_COUNTRY = 'Cambodia'; // Default if geolocation fails
@@ -340,7 +341,9 @@
 
         let apiUrl = '';
         if (lat && lon) {
-          apiUrl = `${API_BASE_URL_COORDS}?latitude=${lat}&longitude=${lon}&method=${CALCULATION_METHOD}`;
+          // Get current timestamp in seconds for the correct API endpoint
+          const timestamp = Math.floor(Date.now() / 1000);
+          apiUrl = `${API_BASE_URL_COORDS}/${timestamp}?latitude=${lat}&longitude=${lon}&method=${CALCULATION_METHOD}`;
         } else {
           apiUrl = `${API_BASE_URL_CITY}?city=${DEFAULT_CITY}&country=${DEFAULT_COUNTRY}&method=${CALCULATION_METHOD}`;
         }
