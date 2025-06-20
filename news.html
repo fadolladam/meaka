@@ -27,11 +27,21 @@
             background: #555;
             border-radius: 2px;
         }
+        /* Fade-in animation for articles */
+        .article-item {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <header class="bg-white shadow-sm py-4 px-4 sm:px-6 lg:px-8 flex items-center relative">
         <div class="flex items-center">
+            <!-- Mobile menu button -->
             <button class="text-gray-600 focus:outline-none md:hidden mr-4">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
@@ -39,12 +49,14 @@
             </button>
         </div>
 
+        <!-- Centered Logo and Title -->
         <div class="absolute left-1/2 -translate-x-1/2 flex items-center">
             <img src="https://placehold.co/40x40/FF0000/FFFFFF?text=K" alt="Logo" class="h-8 w-8 rounded-full">
             <span class="ml-2 text-xl font-bold text-gray-800">ខ្មែរណូត</span>
         </div>
 
         <div class="flex items-center ml-auto">
+            <!-- Search button -->
             <button class="text-gray-600 focus:outline-none">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -54,6 +66,7 @@
     </header>
 
     <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Category Filter -->
         <div class="category-filter flex space-x-4 overflow-x-auto whitespace-nowrap mb-6 pb-2">
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-red-600 text-white shadow-md active-category" data-category="all">ALL</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="national">ព័ត៌មានជាតិ</button>
@@ -63,11 +76,44 @@
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="arts">សិល្បៈ</button>
         </div>
 
-        <div id="article-container" class="grid gap-6">
-            <div id="loading-message" class="text-center text-gray-500 text-lg py-10">Loading news...</div>
-            <div id="error-message" class="text-center text-red-500 text-lg py-10 hidden">Failed to load news. Please check the Google Sheet setup and your internet connection.</div>
+        <!-- Article Container - now smaller -->
+        <div class="max-w-2xl mx-auto"> <!-- Added max-w-2xl and mx-auto for smaller, centered container -->
+            <div id="article-container" class="grid gap-6">
+                <div id="loading-message" class="text-center text-gray-500 text-lg py-10">Loading news...</div>
+                <div id="error-message" class="text-center text-red-500 text-lg py-10 hidden">Failed to load news. Please check the Google Sheet setup and your internet connection.</div>
+            </div>
         </div>
     </main>
+
+    <!-- Article Detail Modal -->
+    <div id="article-detail-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden" aria-hidden="true">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative">
+            <!-- Close button -->
+            <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            <!-- Modal Content -->
+            <div class="p-6">
+                <img id="detail-image" src="" alt="Article Image" class="w-full h-64 object-cover rounded-md mb-4">
+                <span id="detail-tag" class="text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block"></span>
+                <h2 id="detail-title" class="text-2xl font-bold text-gray-900 mb-2"></h2>
+                <div class="flex items-center text-sm text-gray-500 mb-4">
+                    <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span id="detail-date"></span>
+                </div>
+                <div id="detail-content" class="prose max-w-none text-gray-800 leading-relaxed">
+                    <!-- Detailed content will be loaded here -->
+                </div>
+                <div id="loading-detail" class="text-center text-gray-500 text-md py-4 hidden">Generating full article...</div>
+                <div id="error-detail" class="text-center text-red-500 text-md py-4 hidden">Failed to load detailed content.</div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // *** IMPORTANT: Replace this with your Google Apps Script Web App URL ***
@@ -83,6 +129,16 @@
             const loadingMessage = document.getElementById('loading-message');
             const errorMessage = document.getElementById('error-message');
 
+            const detailModal = document.getElementById('article-detail-modal');
+            const closeDetailModalBtn = document.getElementById('close-modal-btn');
+            const detailImage = document.getElementById('detail-image');
+            const detailTag = document.getElementById('detail-tag');
+            const detailTitle = document.getElementById('detail-title');
+            const detailDate = document.getElementById('detail-date');
+            const detailContent = document.getElementById('detail-content');
+            const loadingDetail = document.getElementById('loading-detail');
+            const errorDetail = document.getElementById('error-detail');
+
             let allArticlesData = []; // To store all fetched article data
 
             // Function to render a single article HTML
@@ -94,9 +150,9 @@
 
                 if (isFeatured) {
                     return `
-                        <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 ${categoryClass}" data-category="${article.category}">
+                        <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 ${categoryClass}" data-category="${article.category}" data-id="${article.id}">
                             <div class="relative pb-2/3">
-                                <img src="${article.imageSrc}" alt="${article.title}" class="absolute h-full w-full object-cover">
+                                <img src="${article.imageSrc}" alt="${article.title}" class="absolute h-full w-full object-cover" loading="lazy">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-75"></div>
                                 <div class="absolute bottom-0 left-0 p-4 text-white">
                                     <span class="${tagColorClass} text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">${article.tagText}</span>
@@ -114,9 +170,9 @@
                     `;
                 } else {
                     return `
-                        <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row ${categoryClass}" data-category="${article.category}">
+                        <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row ${categoryClass}" data-category="${article.category}" data-id="${article.id}">
                             <div class="md:w-1/3">
-                                <img src="${article.imageSrc}" alt="${article.title}" class="w-full h-48 object-cover md:h-full">
+                                <img src="${article.imageSrc}" alt="${article.title}" class="w-full h-48 object-cover md:h-full" loading="lazy">
                             </div>
                             <div class="p-4 md:w-2/3">
                                 <span class="${tagColorClass} text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">${article.tagText}</span>
@@ -131,6 +187,47 @@
                             </div>
                         </div>
                     `;
+                }
+            };
+
+            // Function to fetch data from LLM to generate detailed content
+            const generateDetailedContent = async (title, description) => {
+                loadingDetail.classList.remove('hidden');
+                errorDetail.classList.add('hidden');
+                detailContent.innerHTML = ''; // Clear previous content
+
+                try {
+                    const prompt = `Write a detailed news article about: "${title}". Here's a brief description: "${description}". The article should be engaging and informative, at least 300 words long, and divided into paragraphs.`;
+                    
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        detailContent.innerHTML = text.replace(/\n/g, '<br><br>'); // Display with paragraphs
+                        return text;
+                    } else {
+                        throw new Error('No content generated by LLM.');
+                    }
+                } catch (error) {
+                    console.error('Error generating detailed content:', error);
+                    errorDetail.classList.remove('hidden');
+                    return 'Could not generate detailed content at this time. Please try again.';
+                } finally {
+                    loadingDetail.classList.add('hidden');
                 }
             };
 
@@ -162,6 +259,7 @@
                                 articleContainer.insertAdjacentHTML('beforeend', createArticleHtml(article));
                             });
                             loadingMessage.classList.add('hidden');
+                            attachArticleClickListeners(); // Attach listeners after rendering
                             return; // Exit if data loaded from cache
                         }
                     } catch (e) {
@@ -179,6 +277,12 @@
                     }
                     // Parse response as JSON directly
                     allArticlesData = await response.json(); 
+
+                    // Ensure each article has a unique ID for easier lookup
+                    allArticlesData = allArticlesData.map((article, index) => ({
+                        ...article,
+                        id: article.id || `article-${index}` // Assign unique ID if not present
+                    }));
 
                     // Store fetched data in cache
                     localStorage.setItem(CACHE_KEY, JSON.stringify(allArticlesData));
@@ -199,6 +303,7 @@
                         allArticlesData.forEach(article => {
                             articleContainer.insertAdjacentHTML('beforeend', createArticleHtml(article));
                         });
+                        attachArticleClickListeners(); // Attach listeners after rendering
                     }
                 } catch (error) {
                     console.error('Error fetching data:', error);
@@ -232,6 +337,45 @@
                 activeTab.classList.remove('bg-white', 'text-gray-700');
             };
 
+            // Function to attach click listeners to all article items
+            const attachArticleClickListeners = () => {
+                document.querySelectorAll('.article-item').forEach(item => {
+                    item.addEventListener('click', async () => {
+                        const articleId = item.dataset.id;
+                        const article = allArticlesData.find(art => art.id === articleId);
+
+                        if (article) {
+                            // Populate modal with article data
+                            detailImage.src = article.imageSrc;
+                            detailImage.onerror = () => detailImage.src = 'https://placehold.co/600x400/CCCCCC/333333?text=Image+Not+Found'; // Fallback for broken images
+                            detailTag.textContent = article.tagText;
+                            detailTag.className = `${article.tagColor || 'bg-gray-500'} text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block`;
+                            detailTitle.textContent = article.title;
+                            detailDate.textContent = article.date;
+
+                            // Show loading for content, then fetch or display cached content
+                            loadingDetail.classList.remove('hidden');
+                            errorDetail.classList.add('hidden');
+                            detailContent.innerHTML = ''; // Clear existing content
+
+                            if (article.fullContent) {
+                                detailContent.innerHTML = article.fullContent.replace(/\n/g, '<br><br>');
+                                loadingDetail.classList.add('hidden');
+                            } else {
+                                const generatedContent = await generateDetailedContent(article.title, article.description);
+                                if (generatedContent) {
+                                    article.fullContent = generatedContent; // Cache the generated content
+                                }
+                            }
+                            
+                            detailModal.classList.remove('hidden');
+                            document.body.style.overflow = 'hidden'; // Prevent scrolling body
+                            detailModal.setAttribute('aria-hidden', 'false');
+                        }
+                    });
+                });
+            };
+
             // Add click event listeners to category tabs
             categoryTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
@@ -239,6 +383,22 @@
                     filterArticles(selectedCategory);
                     updateActiveTab(tab);
                 });
+            });
+
+            // Close modal event listener
+            closeDetailModalBtn.addEventListener('click', () => {
+                detailModal.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore body scrolling
+                detailModal.setAttribute('aria-hidden', 'true');
+            });
+
+            // Close modal when clicking outside (on backdrop)
+            detailModal.addEventListener('click', (event) => {
+                if (event.target === detailModal) {
+                    detailModal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    detailModal.setAttribute('aria-hidden', 'true');
+                }
             });
 
             // Initial load: Fetch and display articles, then apply 'all' filter
