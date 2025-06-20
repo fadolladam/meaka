@@ -118,10 +118,9 @@
     <script>
         // *** IMPORTANT: Replace this with your Google Apps Script Web App URL ***
         // This URL should look like: https://script.google.com/macros/s/AKfycb.../exec
+        // Make sure your Google Apps Script Web App is deployed with "Execute as: Me" and "Who has access: Anyone, even anonymous".
+        // Also, ensure your Apps Script is configured to allow CORS requests from your website's domain.
         const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbx-RuQFnX1Q7K7m9xljMYS-V052cLHNDyz6za4oRyuAGY_95qH4QkVXbHvEhgyB4fbr-Q/exec'; 
-
-        const CACHE_KEY = 'newsDataCache';
-        const CACHE_EXPIRATION_HOURS = 1; // Cache data for 1 hour
 
         document.addEventListener('DOMContentLoaded', () => {
             const categoryTabs = document.querySelectorAll('.category-tab');
@@ -237,39 +236,7 @@
                 errorMessage.classList.add('hidden');
                 articleContainer.innerHTML = ''; // Clear existing content
 
-                let cachedData = null;
-                let cachedTimestamp = localStorage.getItem(CACHE_KEY + '_timestamp');
-
-                // Check if cached data exists and is not expired
-                if (cachedTimestamp && (Date.now() - parseInt(cachedTimestamp, 10)) < (CACHE_EXPIRATION_HOURS * 60 * 60 * 1000)) {
-                    try {
-                        cachedData = JSON.parse(localStorage.getItem(CACHE_KEY));
-                        if (cachedData) {
-                            allArticlesData = cachedData;
-                            console.log('Loaded data from cache!');
-                            // Render immediately from cache
-                            allArticlesData.sort((a, b) => {
-                                const aIsFeatured = a.isFeatured === true || a.isFeatured === 'TRUE';
-                                const bIsFeatured = b.isFeatured === true || b.isFeatured === 'TRUE';
-                                if (aIsFeatured && !bIsFeatured) return -1;
-                                if (!aIsFeatured && bIsFeatured) return 1;
-                                return 0;
-                            });
-                            allArticlesData.forEach(article => {
-                                articleContainer.insertAdjacentHTML('beforeend', createArticleHtml(article));
-                            });
-                            loadingMessage.classList.add('hidden');
-                            attachArticleClickListeners(); // Attach listeners after rendering
-                            return; // Exit if data loaded from cache
-                        }
-                    } catch (e) {
-                        console.error('Error parsing cached data, fetching new data.', e);
-                        localStorage.removeItem(CACHE_KEY); // Clear bad cache
-                        localStorage.removeItem(CACHE_KEY + '_timestamp');
-                    }
-                }
-
-                // If no valid cache, fetch from network
+                // Fetch directly from network, no caching logic
                 try {
                     const response = await fetch(GOOGLE_SHEET_URL);
                     if (!response.ok) {
@@ -284,10 +251,7 @@
                         id: article.id || `article-${index}` // Assign unique ID if not present
                     }));
 
-                    // Store fetched data in cache
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(allArticlesData));
-                    localStorage.setItem(CACHE_KEY + '_timestamp', Date.now().toString());
-                    console.log('Fetched data from network and cached it.');
+                    console.log('Fetched data from network.');
 
                     if (allArticlesData.length === 0) {
                         articleContainer.innerHTML = '<div class="text-center text-gray-500 text-lg py-10">No news articles found.</div>';
