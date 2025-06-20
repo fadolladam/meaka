@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KhmerNote - ម៉ោងបន់ស្រន់</title>
+  <title>ព័ត៌មានឥស្លាមកម្ពុជា - ម៉ោងសឡាត៍</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -75,7 +75,7 @@
     </div>
     <div class="absolute left-1/2 -translate-x-1/2 flex items-center">
       <img src="https://scontent.fpnh9-1.fna.fbcdn.net/v/t39.30808-6/311999261_659402089156169_3698811190426210172_n.png?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGJIur_Kg8cGzkD23nxSKBgRlZjretdmSlGVmOt612ZKZPktv7QlnixGPoZtTzUysyoAUofoScCx7efHRyWnXyB&_nc_ohc=toP0OLnLVOwQ7kNvwFW_SGf&_nc_oc=AdmmYhOrBuLSsC7dQUWwt8SSvuOfOpV8U3emoQWnhjCXIpsRWNgvbD9n4wsHhhaS0Ns&_nc_zt=23&_nc_ht=scontent.fpnh9-1.fna&_nc_gid=39KMuSC-SvfaWG08Bh0d5A&oh=00_AfOtQ-oPJasLmxlb3TBl0FqyQYdeXvYiyZk53PzflKhSTQ&oe=685B5E03" alt="Logo" class="h-8 w-8 rounded-full">
-      <span class="ml-2 text-xl font-bold text-gray-800">ម៉ោងបន់ស្រន់</span>
+      <span class="ml-2 text-xl font-bold text-gray-800">ម៉ោងសឡាត៍</span>
     </div>
     <div class="flex items-center ml-auto">
       <!-- Search button, removed for prayer times as it's not relevant here -->
@@ -90,16 +90,16 @@
     </div>
 
     <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6 mb-6">
-      <h3 class="text-xl font-semibold text-gray-800 mb-4 suwannaphum">ម៉ោងបន់ស្រន់ថ្ងៃនេះ</h3>
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 suwannaphum">ម៉ោងសឡាត៍ថ្ងៃនេះ</h3>
       <div id="prayer-times-list" class="space-y-3">
         <!-- Prayer times will be injected here by JavaScript -->
-        <div id="loading-prayer-times" class="text-center text-gray-500 text-lg py-4">កំពុងផ្ទុកម៉ោងបន់ស្រន់...</div>
-        <div id="error-prayer-times" class="text-center text-red-500 text-lg py-4 hidden">បរាជ័យក្នុងការផ្ទុកម៉ោងបន់ស្រន់.</div>
+        <div id="loading-prayer-times" class="text-center text-gray-500 text-lg py-4">កំពុងផ្ទុកម៉ោងសឡាត៍...</div>
+        <div id="error-prayer-times" class="text-center text-red-500 text-lg py-4 hidden">បរាជ័យក្នុងការផ្ទុកម៉ោងសឡាត៍.</div>
       </div>
     </div>
 
     <div class="max-w-md w-full bg-blue-600 text-white rounded-lg shadow-md p-6 text-center">
-      <h3 class="text-xl font-semibold mb-2 suwannaphum">ម៉ោងបន់ស្រន់បន្ទាប់</h3>
+      <h3 class="text-xl font-semibold mb-2 suwannaphum">ម៉ោងសឡាត៍បន្ទាប់</h3>
       <p id="next-prayer-name" class="text-3xl font-bold mb-1 suwannaphum"></p>
       <p id="time-remaining" class="text-4xl font-extrabold suwannaphum-black"></p>
     </div>
@@ -121,7 +121,7 @@
         <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <span class="text-xs font-medium">ម៉ោងបន់ស្រន់</span>
+        <span class="text-xs font-medium">ម៉ោងសឡាត៍</span>
       </a>
 
       <!-- Dua Icon -->
@@ -344,7 +344,7 @@
         } catch (error) {
           console.error('Error fetching prayer times:', error);
           errorPrayerTimes.classList.remove('hidden');
-          errorPrayerTimes.textContent = 'បរាជ័យក្នុងការផ្ទុកម៉ោងបន់ស្រន់។ សូម​ព្យាយាម​ម្ដង​ទៀត​នៅ​ពេល​ក្រោយ។'; // Khmer for "Failed to load prayer times. Please try again later."
+          errorPrayerTimes.textContent = 'បរាជ័យក្នុងការផ្ទុកម៉ោងសឡាត៍។ សូម​ព្យាយាម​ម្ដង​ទៀត​នៅ​ពេល​ក្រោយ។'; // Khmer for "Failed to load prayer times. Please try again later."
           prayerTimesList.innerHTML = ''; // Clear list on error
         } finally {
           loadingPrayerTimes.classList.add('hidden');
