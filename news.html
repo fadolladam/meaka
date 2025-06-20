@@ -25,13 +25,12 @@
         }
         .category-filter::-webkit-scrollbar-thumb:hover {
             background: #555;
+            border-radius: 2px;
         }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Header Section -->
     <header class="bg-white shadow-sm py-4 px-4 sm:px-6 lg:px-8 flex items-center relative">
-        <!-- Left: Hamburger Icon (mobile only) -->
         <div class="flex items-center">
             <button class="text-gray-600 focus:outline-none md:hidden mr-4">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -40,13 +39,11 @@
             </button>
         </div>
 
-        <!-- Center: Logo and Text -->
         <div class="absolute left-1/2 -translate-x-1/2 flex items-center">
             <img src="https://placehold.co/40x40/FF0000/FFFFFF?text=K" alt="Logo" class="h-8 w-8 rounded-full">
             <span class="ml-2 text-xl font-bold text-gray-800">ខ្មែរណូត</span>
         </div>
 
-        <!-- Right: Search Icon -->
         <div class="flex items-center ml-auto">
             <button class="text-gray-600 focus:outline-none">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -56,9 +53,7 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <!-- Category Filter Bar -->
         <div class="category-filter flex space-x-4 overflow-x-auto whitespace-nowrap mb-6 pb-2">
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-red-600 text-white shadow-md active-category" data-category="all">ALL</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="national">ព័ត៌មានជាតិ</button>
@@ -68,260 +63,132 @@
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="arts">សិល្បៈ</button>
         </div>
 
-        <!-- Article List - All articles are here, hidden/shown by JS -->
         <div id="article-container" class="grid gap-6">
-
-            <!-- Featured Article (always visible initially, unless filtered by specific category) -->
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 article-national" data-category="national">
-                <div class="relative pb-2/3"> <!-- Aspect ratio box for image -->
-                    <img src="https://placehold.co/600x400/CCCCCC/333333?text=Cambodia+ASEAN+ParaGames" alt="Featured Article: Cambodia Prepares for ParaGames" class="absolute h-full w-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-75"></div>
-                    <div class="absolute bottom-0 left-0 p-4 text-white">
-                        <span class="bg-red-600 text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">ព័ត៌មានជាតិ</span>
-                        <h3 class="text-xl font-bold leading-tight">កម្ពុជាត្រៀមខ្លួនជាស្រេចក្នុងការធ្វើជាម្ចាស់ផ្ទះកីឡាអាស៊ានប៉ារ៉ាហ្គេម</h3>
-                        <p class="text-sm mt-2">អនុញ្ញាតឱ្យប្រជាពលរដ្ឋចូលរួមទស្សនាដោយសេរី</p>
-                        <div class="flex items-center text-xs mt-2">
-                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span>JUNE 20, 2025</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- National News Articles -->
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-national" data-category="national">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/DDDDDD/666666?text=National+News+1" alt="National News 1" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">PR</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">ពីហ្គីគីមេន ណេតវើក ណេតវើក!</h4>
-                    <p class="text-gray-700 text-sm">ហ្គីគីណូត អេស-ប្តូរប្រាក់បដិសេធន៍ប្តូរប្រាក់បដិសេធន៍ 7,777</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 20, 2025</span>
-                    </div>
-                </div>
-            </div>
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-national" data-category="national">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/DDDDDD/666666?text=National+News+2" alt="National News 2" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">ព័ត៌មានជាតិ</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">ក្រសួងសង្គមកិច្ច សហការជាមួយ</h4>
-                    <p class="text-gray-700 text-sm">សមាគមអភិវឌ្ឍន៍ធនធានកម្ពុជា និងប្រារព្ធពិធីអបអរសាទរខួបកំណើតទី៦០ របស់</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 20, 2025</span>
-                    </div>
-                </div>
-            </div>
-             <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-national" data-category="national">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/E0E0E0/555555?text=National+News+3" alt="National News 3" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">ព័ត៌មានជាតិ</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">រដ្ឋាភិបាល​ជំរុញ​វិស័យ​កសិកម្ម​ឱ្យ​រីកចម្រើន</h4>
-                    <p class="text-gray-700 text-sm">ពង្រឹងគុណភាពផលិតផល និងពង្រីកទីផ្សារនាំចេញ</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 19, 2025</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- International News Articles -->
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 article-international" data-category="international">
-                <div class="relative pb-2/3">
-                    <img src="https://placehold.co/600x400/BBBBBB/444444?text=International+Conflict" alt="Featured Article: International Conflict" class="absolute h-full w-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-75"></div>
-                    <div class="absolute bottom-0 left-0 p-4 text-white">
-                        <span class="bg-blue-700 text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">អន្តរជាតិ</span>
-                        <h3 class="text-xl font-bold leading-tight">ភាពតានតឹងនៅតំបន់មជ្ឈិមបូព៌ា នៅតែបន្តកើនឡើង</h3>
-                        <p class="text-sm mt-2">មេដឹកនាំពិភពលោកអំពាវនាវឱ្យមានការចរចាដោយសន្តិវិធី</p>
-                        <div class="flex items-center text-xs mt-2">
-                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span>JUNE 20, 2025</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-international" data-category="international">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/E0E0E0/555555?text=International+News+1" alt="International News 1" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-blue-700 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">អន្តរជាតិ</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">ការផ្លាស់ប្តូរអាកាសធាតុបង្កផលប៉ះពាល់ធ្ងន់ធ្ងរ</h4>
-                    <p class="text-gray-700 text-sm">សហគមន៍អន្តរជាតិរួមគ្នាដោះស្រាយបញ្ហានេះ</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 19, 2025</span>
-                    </div>
-                </div>
-            </div>
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-international" data-category="international">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/C0C0C0/777777?text=International+News+2" alt="International News 2" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-blue-700 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">អន្តរជាតិ</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">សេដ្ឋកិច្ចពិភពលោកបង្ហាញសញ្ញានៃការងើបឡើងវិញ</h4>
-                    <p class="text-gray-700 text-sm">វិធានការជំរុញសេដ្ឋកិច្ចកំពុងត្រូវបានអនុវត្ត</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 18, 2025</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Technology Articles -->
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 article-technology" data-category="technology">
-                <div class="relative pb-2/3">
-                    <img src="https://placehold.co/600x400/999999/FFFFFF?text=AI+Innovations" alt="Featured Article: AI Innovations" class="absolute h-full w-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-75"></div>
-                    <div class="absolute bottom-0 left-0 p-4 text-white">
-                        <span class="bg-green-600 text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">បច្ចេកវិទ្យា</span>
-                        <h3 class="text-xl font-bold leading-tight">បច្ចេកវិទ្យា AI នឹងផ្លាស់ប្តូររបៀបរស់នៅ</h3>
-                        <p class="text-sm mt-2">ការវិវត្តន៍ថ្មីៗនៅក្នុងវិស័យបញ្ញាសិប្បនិម្មិត</p>
-                        <div class="flex items-center text-xs mt-2">
-                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span>JUNE 20, 2025</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-technology" data-category="technology">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/D0D0D0/888888?text=Tech+News+1" alt="Tech News 1" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">បច្ចេកវិទ្យា</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">ស្មាតហ្វូនជំនាន់ថ្មីបង្ហាញមុខជាផ្លូវការ</h4>
-                    <p class="text-gray-700 text-sm">បំពាក់ដោយបច្ចេកវិទ្យាចុងក្រោយបង្អស់</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 18, 2025</span>
-                    </div>
-                </div>
-            </div>
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-technology" data-category="technology">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/A0A0A0/DDDDDD?text=Tech+News+2" alt="Tech News 2" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">បច្ចេកវិទ្យា</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">ការអភិវឌ្ឍន៍យានយន្តអគ្គិសនីកាន់តែលឿន</h4>
-                    <p class="text-gray-700 text-sm">ក្រុមហ៊ុនជាច្រើនប្រកួតប្រជែងគ្នាខ្លាំង</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 17, 2025</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sports Articles -->
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 article-sports" data-category="sports">
-                <div class="relative pb-2/3">
-                    <img src="https://placehold.co/600x400/777777/AAAAAA?text=Football+Match" alt="Featured Article: Football Match" class="absolute h-full w-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-75"></div>
-                    <div class="absolute bottom-0 left-0 p-4 text-white">
-                        <span class="bg-purple-600 text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">កីឡា</span>
-                        <h3 class="text-xl font-bold leading-tight">ក្រុមបាល់ទាត់ជាតិឈ្នះការប្រកួតមិត្តភាព</h3>
-                        <p class="text-sm mt-2">ត្រៀមខ្លួនសម្រាប់ព្រឹត្តិការណ៍ធំនៅខាងមុខ</p>
-                        <div class="flex items-center text-xs mt-2">
-                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span>JUNE 19, 2025</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-sports" data-category="sports">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/D5D5D5/666666?text=Sports+News+1" alt="Sports News 1" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-purple-600 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">កីឡា</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">កីឡាករវ័យក្មេងទទួលបានពានរង្វាន់</h4>
-                    <p class="text-gray-700 text-sm">បង្ហាញសមត្ថភាពដ៏លេចធ្លោរក្នុងការប្រកួត</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 17, 2025</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Arts Articles -->
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 article-arts" data-category="arts">
-                <div class="relative pb-2/3">
-                    <img src="https://placehold.co/600x400/555555/EEEEEE?text=Traditional+Dance" alt="Featured Article: Traditional Dance" class="absolute h-full w-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-75"></div>
-                    <div class="absolute bottom-0 left-0 p-4 text-white">
-                        <span class="bg-yellow-600 text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">សិល្បៈ</span>
-                        <h3 class="text-xl font-bold leading-tight">ការប្រគុំតន្ត្រីប្រពៃណីទាក់ទាញចំណាប់អារម្មណ៍</h3>
-                        <p class="text-sm mt-2">សិល្បករជាច្រើនបានចូលរួមសម្តែង</p>
-                        <div class="flex items-center text-xs mt-2">
-                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span>JUNE 19, 2025</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row article-arts" data-category="arts">
-                <div class="md:w-1/3">
-                    <img src="https://placehold.co/300x200/C5C5C5/777777?text=Arts+News+1" alt="Arts News 1" class="w-full h-48 object-cover md:h-full">
-                </div>
-                <div class="p-4 md:w-2/3">
-                    <span class="bg-yellow-600 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">សិល្បៈ</span>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">ពិព័រណ៍គំនូរទំនើបបើកសម្ពោធ</h4>
-                    <p class="text-gray-700 text-sm">ស្នាដៃគំនូរជាច្រើនត្រូវបានដាក់តាំងបង្ហាញ</p>
-                    <div class="flex items-center text-xs text-gray-500 mt-3">
-                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>JUNE 16, 2025</span>
-                    </div>
-                </div>
-            </div>
-
-        </div> <!-- End of article-container -->
+            <div id="loading-message" class="text-center text-gray-500 text-lg py-10">Loading news...</div>
+            <div id="error-message" class="text-center text-red-500 text-lg py-10 hidden">Failed to load news. Please check the Google Sheet URL and your internet connection.</div>
+        </div>
     </main>
 
     <script>
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRt9PCK-5Nz_GciZCz9eDawM9GcWeSzRpO_OTDWOxhShhxNhQHvcoCGfUXYg2tSd9A-snD1gsmtMNnq/pub?gid=2066493461&single=true&output=csv'; // *** IMPORTANT: Replace this with your URL ***
+
         document.addEventListener('DOMContentLoaded', () => {
             const categoryTabs = document.querySelectorAll('.category-tab');
-            const articles = document.querySelectorAll('.article-item');
+            const articleContainer = document.getElementById('article-container');
+            const loadingMessage = document.getElementById('loading-message');
+            const errorMessage = document.getElementById('error-message');
 
-            // Function to filter articles
+            let allArticlesData = []; // To store all fetched article data
+
+            // Function to render a single article HTML
+            const createArticleHtml = (article) => {
+                const isFeatured = article.isFeatured === 'TRUE'; // Google Sheet CSV treats boolean as string
+                const categoryClass = `article-${article.category}`;
+                const tagColorClass = article.tagColor || 'bg-gray-500'; // Default color if not specified
+
+                if (isFeatured) {
+                    return `
+                        <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 ${categoryClass}" data-category="${article.category}">
+                            <div class="relative pb-2/3">
+                                <img src="${article.imageSrc}" alt="${article.title}" class="absolute h-full w-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-75"></div>
+                                <div class="absolute bottom-0 left-0 p-4 text-white">
+                                    <span class="${tagColorClass} text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">${article.tagText}</span>
+                                    <h3 class="text-xl font-bold leading-tight">${article.title}</h3>
+                                    <p class="text-sm mt-2">${article.description}</p>
+                                    <div class="flex items-center text-xs mt-2">
+                                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>${article.date}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="article-item bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row ${categoryClass}" data-category="${article.category}">
+                            <div class="md:w-1/3">
+                                <img src="${article.imageSrc}" alt="${article.title}" class="w-full h-48 object-cover md:h-full">
+                            </div>
+                            <div class="p-4 md:w-2/3">
+                                <span class="${tagColorClass} text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">${article.tagText}</span>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">${article.title}</h4>
+                                <p class="text-gray-700 text-sm">${article.description}</p>
+                                <div class="flex items-center text-xs text-gray-500 mt-3">
+                                    <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>${article.date}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            };
+
+            // Function to parse CSV data
+            const parseCSV = (csv) => {
+                const lines = csv.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
+                if (lines.length === 0) return [];
+
+                const headers = lines[0].split(',').map(header => header.trim());
+                const data = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',');
+                    const entry = {};
+                    headers.forEach((header, index) => {
+                        entry[header] = values[index] ? values[index].trim() : ''; // Handle potential undefined values
+                    });
+                    data.push(entry);
+                }
+                return data;
+            };
+
+            // Function to fetch and display articles
+            const fetchAndDisplayArticles = async () => {
+                loadingMessage.classList.remove('hidden');
+                errorMessage.classList.add('hidden');
+                articleContainer.innerHTML = ''; // Clear existing content
+
+                try {
+                    const response = await fetch(GOOGLE_SHEET_URL);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const csvText = await response.text();
+                    allArticlesData = parseCSV(csvText);
+
+                    if (allArticlesData.length === 0) {
+                        articleContainer.innerHTML = '<div class="text-center text-gray-500 text-lg py-10">No news articles found.</div>';
+                    } else {
+                        // Sort articles: featured first, then by date (or any other criteria)
+                        allArticlesData.sort((a, b) => {
+                            if (a.isFeatured === 'TRUE' && b.isFeatured !== 'TRUE') return -1;
+                            if (a.isFeatured !== 'TRUE' && b.isFeatured === 'TRUE') return 1;
+                            // Optional: Add secondary sort by date if needed
+                            // return new Date(b.date) - new Date(a.date);
+                            return 0;
+                        });
+
+                        allArticlesData.forEach(article => {
+                            articleContainer.insertAdjacentHTML('beforeend', createArticleHtml(article));
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error fetching or parsing data:', error);
+                    errorMessage.classList.remove('hidden');
+                    loadingMessage.classList.add('hidden');
+                } finally {
+                    loadingMessage.classList.add('hidden');
+                }
+            };
+
+            // Function to filter articles based on category
             const filterArticles = (category) => {
+                const articles = document.querySelectorAll('.article-item'); // Re-select all articles after they are loaded
                 articles.forEach(article => {
                     const articleCategory = article.dataset.category;
                     if (category === 'all' || articleCategory === category) {
@@ -351,12 +218,14 @@
                 });
             });
 
-            // Initialize: Show all articles and set "ALL" as active on load
-            filterArticles('all');
-            const allTab = document.querySelector('.category-tab[data-category="all"]');
-            if (allTab) {
-                updateActiveTab(allTab);
-            }
+            // Initial load: Fetch and display articles, then apply 'all' filter
+            fetchAndDisplayArticles().then(() => {
+                const allTab = document.querySelector('.category-tab[data-category="all"]');
+                if (allTab) {
+                    updateActiveTab(allTab);
+                    filterArticles('all'); // Ensure filter is applied after articles are rendered
+                }
+            });
         });
     </script>
 </body>
