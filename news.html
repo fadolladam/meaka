@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Hub - Sticky Header & Lazy Load News</title>
+    <title>News Hub - Responsive & Lazy Load</title>
     <!-- Tailwind CSS CDN for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -18,19 +18,6 @@
             min-height: 100vh;
             padding: 0; /* Remove body padding to allow sticky header to reach top edge */
             box-sizing: border-box;
-        }
-
-        /* Container for the main content areas */
-        .content-container {
-            width: 100%;
-            max-width: 600px; /* Max width for better readability on large screens */
-            background-color: #ffffff; /* White background for the content area */
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
-            padding: 20px; /* Internal padding for the news content */
-            box-sizing: border-box;
-            margin-bottom: 20px; /* Space below the content container */
-            margin-top: 20px; /* Space below the sticky header */
         }
 
         /* Sticky header for the image */
@@ -114,7 +101,8 @@
     </div>
 
     <!-- Main Content Container for News -->
-    <div class="content-container">
+    <!-- Using Tailwind's 'container' class for responsive max-width and 'mx-auto' for centering -->
+    <div class="container mx-auto px-4 py-8 bg-white rounded-lg shadow-md mt-5">
         <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Latest News Headlines</h2>
 
         <!-- Container where news articles will be loaded -->
@@ -128,7 +116,7 @@
         </div>
     </div>
 
-    <p class="text-gray-500 text-sm mt-4 text-center">
+    <p class="text-gray-500 text-sm mt-4 text-center pb-8">
         Dummy news content generated for demonstration. Styling by Tailwind CSS.
     </p>
 
@@ -151,7 +139,17 @@
                 "City Marathon Sees Record Participation",
                 "Breakthrough in Renewable Battery Technology",
                 "Historical Landmark Restoration Underway",
-                "Culinary Festival Kicks Off This Weekend"
+                "Culinary Festival Kicks Off This Weekend",
+                "Innovations in Healthcare Unveiled",
+                "Global Climate Summit Concludes with New Pledges",
+                "Local Artists Showcase Work in New Gallery",
+                "Space Exploration Team Discovers New Exoplanet",
+                "Financial Markets React to Latest Economic Data",
+                "Educational Reforms Aim to Boost Student Outcomes",
+                "Wildlife Conservation Efforts Gain Momentum",
+                "Smart City Initiatives Transform Urban Living",
+                "Agricultural Innovations Address Food Security",
+                "Sports Championship Draws Record Viewership"
             ];
             const snippets = [
                 "The city council has given the green light to the comprehensive renovation of Central Park, promising new recreational facilities and enhanced green spaces for residents.",
@@ -163,7 +161,17 @@
                 "Thousands of runners took to the streets for the annual city marathon, marking the highest participation rate in the event's history.",
                 "Scientists announce a major stride in energy storage, with a new battery prototype showing unprecedented efficiency and longevity.",
                 "Work has begun on restoring the historic old town hall, aiming to preserve its architectural heritage for future generations.",
-                "Food enthusiasts gather as the annual culinary festival begins, showcasing local produce and innovative dishes from top chefs."
+                "Food enthusiasts gather as the annual culinary festival begins, showcasing local produce and innovative dishes from top chefs.",
+                "Cutting-edge medical research is paving the way for new treatments and therapies, set to revolutionize patient care.",
+                "Leaders from around the world met to discuss urgent climate action, resulting in ambitious new commitments to reduce carbon emissions.",
+                "A diverse collection of paintings, sculptures, and digital art pieces are now on display, highlighting the vibrant local art scene.",
+                "Astronomers confirm the existence of a potentially habitable exoplanet, reigniting excitement in the search for extraterrestrial life.",
+                "Stock markets show volatility as investors digest the latest inflation figures and central bank policy statements.",
+                "A new curriculum and teacher training programs are being implemented across schools to improve learning environments and student achievement.",
+                "Rare species are showing signs of recovery thanks to dedicated conservation programs and increased public awareness.",
+                "Advanced technologies like IoT and AI are being integrated into urban planning to create more efficient and sustainable cities.",
+                "Farmers are adopting innovative techniques and crops to increase yields and ensure food security in a changing climate.",
+                "The final match of the season's championship broke all previous viewership records, captivating millions of fans worldwide."
             ];
             const date = new Date();
             date.setDate(date.getDate() - index); // Simulate older dates for older articles
@@ -196,7 +204,7 @@
                     articleCount++;
                 }
                 loadingIndicator.classList.remove('show'); // Hide loading indicator
-            }, 1000); // 1 second delay
+            }, 700); // Shorter delay for faster demonstration
         }
 
         // Intersection Observer for lazy loading
@@ -216,7 +224,7 @@
         // Initial load of articles when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             // Load an initial set of articles so there's content to scroll
-            for (let i = 0; i < 10; i++) { // Load 10 articles initially
+            for (let i = 0; i < 7; i++) { // Load 7 articles initially
                 const newArticle = generateDummyArticle(articleCount);
                 newsContainer.insertAdjacentHTML('beforeend', newArticle);
                 articleCount++;
