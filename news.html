@@ -121,7 +121,7 @@
         // This URL should look like: https://script.google.com/macros/s/AKfycb.../exec
         // Make sure your Google Apps Script Web App is deployed with "Execute as: Me" and "Who has access: Anyone, even anonymous".
         // Also, ensure your Apps Script is configured to allow CORS requests from your website's domain.
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwcVJgP0LQCsa06bc637RGAUf0OeVsyo8jmWpldOWniC6oNXEZhMw3R5lGHzDvESB-HeQ/exec'; 
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxNJoTLtPDEv2-D5n0QlYYPYRo-xUmaoqeALGv--6Vo4qD_JlYkAED7BSrGcyrGqVbhug/exec'; 
 
         document.addEventListener('DOMContentLoaded', () => {
             const categoryTabs = document.querySelectorAll('.category-tab');
@@ -239,52 +239,50 @@
             };
 
             // Function to fetch and display articles
-            const fetchAndDisplayArticles = async () => {
-                loadingMessage.classList.remove('hidden');
-                errorMessage.classList.add('hidden');
-                articleContainer.innerHTML = ''; // Clear existing content
+            // Fetch and display articles
+const fetchAndDisplayArticles = async () => {
+    loadingMessage.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+    articleContainer.innerHTML = ''; // Clear existing content
 
-                // Fetch directly from network, no caching logic
-                try {
-                    const response = await fetch(GOOGLE_SHEET_URL);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    // Parse response as JSON directly
-                    allArticlesData = await response.json(); 
+    try {
+        const response = await fetch(GOOGLE_SHEET_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-                    // Ensure each article has a unique ID for easier lookup
-                    allArticlesData = allArticlesData.map((article, index) => ({
-                        ...article,
-                        id: article.id || `article-${index}` // Assign unique ID if not present
-                    }));
+        let data = await response.json();
 
-                    console.log('Fetched data from network.');
+        // Map DetailedContent to fullContent
+        allArticlesData = data.map((article, index) => ({
+            ...article,
+            id: article.id || `article-${index}`,
+            fullContent: article.DetailedContent || '' // <-- Mapped here
+        }));
 
-                    if (allArticlesData.length === 0) {
-                        articleContainer.innerHTML = '<div class="text-center text-gray-500 text-lg py-10">No news articles found.</div>';
-                    } else {
-                        // Sort articles: featured first
-                        allArticlesData.sort((a, b) => {
-                            const aIsFeatured = a.isFeatured === true || a.isFeatured === 'TRUE';
-                            const bIsFeatured = b.isFeatured === true || b.isFeatured === 'TRUE';
-                            if (aIsFeatured && !bIsFeatured) return -1;
-                            if (!aIsFeatured && bIsFeatured) return 1;
-                            return 0; // Maintain original order for non-featured or both featured
-                        });
-                        allArticlesData.forEach(article => {
-                            articleContainer.insertAdjacentHTML('beforeend', createArticleHtml(article));
-                        });
-                        attachArticleClickListeners(); // Attach listeners after rendering
-                    }
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                    errorMessage.classList.remove('hidden');
-                    loadingMessage.classList.add('hidden');
-                } finally {
-                    loadingMessage.classList.add('hidden');
-                }
-            };
+        if (allArticlesData.length === 0) {
+            articleContainer.innerHTML = '<div class="text-center text-gray-500 text-lg py-10">No news articles found.</div>';
+        } else {
+            allArticlesData.sort((a, b) => {
+                const aIsFeatured = a.isFeatured === true || a.isFeatured === 'TRUE';
+                const bIsFeatured = b.isFeatured === true || b.isFeatured === 'TRUE';
+                return aIsFeatured && !bIsFeatured ? -1 : (!aIsFeatured && bIsFeatured ? 1 : 0);
+            });
+
+            allArticlesData.forEach(article => {
+                articleContainer.insertAdjacentHTML('beforeend', createArticleHtml(article));
+            });
+
+            attachArticleClickListeners();
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        errorMessage.classList.remove('hidden');
+    } finally {
+        loadingMessage.classList.add('hidden');
+    }
+};
+
 
             // Function to filter articles based on category
             const filterArticles = (category) => {
@@ -336,7 +334,7 @@
                             detailContent.innerHTML = ''; // Clear existing content
 
                             if (article.fullContent) {
-                                detailContent.innerHTML = article.fullContent.replace(/\n/g, '<br><br>');
+                                detailContent.innerHTML = article.fullContent.replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
                                 loadingDetail.classList.add('hidden');
                             } else {
                                 const generatedContent = await generateDetailedContent(article.title, article.description);
