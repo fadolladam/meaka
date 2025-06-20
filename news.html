@@ -39,7 +39,7 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-white shadow-sm py-4 px-4 sm:px-6 lg:px-8 flex items-center relative">
+    <header class="bg-white shadow-sm py-4 px-4 sm:px-6 lg:px-8 flex items-center relative z-10">
         <div class="flex items-center">
             <!-- Mobile menu button -->
             <button class="text-gray-600 focus:outline-none md:hidden mr-4">
@@ -70,7 +70,7 @@
         <div class="category-filter flex space-x-4 overflow-x-auto whitespace-nowrap pb-2">
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-red-600 text-white shadow-md active-category" data-category="all">ALL</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="national">ព័ត៌មានជាតិ</button>
-            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="international">ព័ត៌មានអន្តរជាតិ</button>
+            <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="international">ព័ត៌មេនអន្តរជាតិ</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="technology">បច្ចេកវិទ្យា</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="sports">កីឡា</button>
             <button class="category-tab px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 hover:bg-gray-200 shadow-md" data-category="arts">សិល្បៈ</button>
@@ -86,17 +86,18 @@
     </main>
 
     <!-- Article Detail Modal -->
+    <!-- Adjusted top-0 to top-16 (or similar) to account for header height -->
     <div id="article-detail-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden" aria-hidden="true">
-        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[calc(90vh-4rem)] overflow-y-auto relative mt-16 md:mt-0">
             <!-- Close button -->
-            <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none z-50">
+                <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
 
             <!-- Modal Content -->
-            <div class="p-6">
+            <div class="p-6 pt-10"> <!-- Added padding-top to ensure content doesn't get hidden by the close button -->
                 <img id="detail-image" src="" alt="Article Image" class="w-full h-64 object-cover rounded-md mb-4">
                 <span id="detail-tag" class="text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block"></span>
                 <h2 id="detail-title" class="text-2xl font-bold text-gray-900 mb-2"></h2>
@@ -147,6 +148,13 @@
                 const categoryClass = `article-${article.category}`;
                 const tagColorClass = article.tagColor || 'bg-gray-500'; // Default color if not specified
 
+                // Format the date before displaying in the main article list
+                const formattedDate = new Date(article.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
                 if (isFeatured) {
                     return `
                         <div class="article-item bg-white rounded-lg shadow-md overflow-hidden mb-6 ${categoryClass}" data-category="${article.category}" data-id="${article.id}">
@@ -161,7 +169,7 @@
                                         <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
-                                        <span>${article.date}</span>
+                                        <span>${formattedDate}</span>
                                     </div>
                                 </div>
                             </div>
@@ -181,7 +189,7 @@
                                     <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
-                                    <span>${article.date}</span>
+                                    <span>${formattedDate}</span>
                                 </div>
                             </div>
                         </div>
@@ -315,7 +323,12 @@
                             detailTag.textContent = article.tagText;
                             detailTag.className = `${article.tagColor || 'bg-gray-500'} text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block`;
                             detailTitle.textContent = article.title;
-                            detailDate.textContent = article.date;
+                            // Format the date for the detail modal
+                            detailDate.textContent = new Date(article.date).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
 
                             // Show loading for content, then fetch or display cached content
                             loadingDetail.classList.remove('hidden');
