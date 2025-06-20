@@ -65,13 +65,14 @@
 
         <div id="article-container" class="grid gap-6">
             <div id="loading-message" class="text-center text-gray-500 text-lg py-10">Loading news...</div>
-            <div id="error-message" class="text-center text-red-500 text-lg py-10 hidden">Failed to load news. Please check the Google Sheet URL and your internet connection.</div>
+            <div id="error-message" class="text-center text-red-500 text-lg py-10 hidden">Failed to load news. Please check the Google Sheet setup and your internet connection.</div>
         </div>
     </main>
 
     <script>
         // *** IMPORTANT: Replace this with your Google Apps Script Web App URL ***
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzdX84l60bwZQnsAhjrFALs_IZYir1nepH_yrwldp_CHfNodnoS4rFH9OXVhMxSRMzi/exec'; 
+        // This URL should look like: https://script.google.com/macros/s/AKfycb.../exec
+        const GOOGLE_SHEET_URL = 'YOUR_NEW_APPS_SCRIPT_WEB_APP_URL_HERE'; 
 
         const CACHE_KEY = 'newsDataCache';
         const CACHE_EXPIRATION_HOURS = 1; // Cache data for 1 hour
