@@ -85,8 +85,8 @@
   <!-- MAIN Content for Prayer Times -->
   <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col items-center">
     <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6 mb-6 text-center">
-      <h2 id="current-location" class="text-2xl font-bold text-gray-900 mb-2 suwannaphum">ទីក្រុងភ្នំពេញ, កម្ពុជា</h2>
-      <p id="current-date" class="text-gray-600 text-lg suwannaphum-regular">ថ្ងៃសុក្រ, មិថុនា 20, 2025</p>
+      <h2 id="current-location" class="text-2xl font-bold text-gray-900 mb-2 suwannaphum"></h2>
+      <p id="current-date" class="text-gray-600 text-lg suwannaphum-regular"></p>
     </div>
 
     <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6 mb-6">
@@ -95,6 +95,7 @@
         <!-- Prayer times will be injected here by JavaScript -->
         <div id="loading-prayer-times" class="text-center text-gray-500 text-lg py-4">កំពុងផ្ទុកម៉ោងសឡាត៍...</div>
         <div id="error-prayer-times" class="text-center text-red-500 text-lg py-4 hidden">បរាជ័យក្នុងការផ្ទុកម៉ោងសឡាត៍.</div>
+        <div id="location-permission-message" class="text-center text-gray-500 text-sm py-2 hidden">Please allow location access to get accurate prayer times.</div>
       </div>
     </div>
 
@@ -143,7 +144,7 @@
       </a>
 
       <!-- News Icon -->
-      <a href="news.html" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+      <a href="#" class="nav-item flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
         <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-3m-6 0h6" />
         </svg>
@@ -159,13 +160,15 @@
       const prayerTimesList = document.getElementById('prayer-times-list');
       const loadingPrayerTimes = document.getElementById('loading-prayer-times');
       const errorPrayerTimes = document.getElementById('error-prayer-times');
+      const locationPermissionMessage = document.getElementById('location-permission-message'); // New element
       const nextPrayerNameEl = document.getElementById('next-prayer-name');
       const timeRemainingEl = document.getElementById('time-remaining');
 
       // API Configuration
-      const API_BASE_URL = 'https://api.aladhan.com/v1/timingsByCity';
-      const CITY = 'Phnom Penh';
-      const COUNTRY = 'Cambodia';
+      const API_BASE_URL_COORDS = 'https://api.aladhan.com/v1/timingsByCoordinates'; // Changed API endpoint
+      const API_BASE_URL_CITY = 'https://api.aladhan.com/v1/timingsByCity'; // Fallback endpoint
+      const DEFAULT_CITY = 'Phnom Penh'; // Default if geolocation fails
+      const DEFAULT_COUNTRY = 'Cambodia'; // Default if geolocation fails
       const CALCULATION_METHOD = 2; // 2: University of Islamic Sciences, Karachi (common)
 
       let prayerTimesToday = null; // Stores today's fetched prayer times
@@ -235,6 +238,7 @@
         // Find the next prayer and current prayer
         for (let i = 0; i < prayersWithDates.length; i++) {
           const prayerDate = prayersWithDates[i].date;
+          // Check if current time is within this prayer's time or if it's the next upcoming prayer
           if (prayerDate > now) {
             nextPrayer = prayersWithDates[i];
             timeToNextPrayerMs = nextPrayer.date.getTime() - now.getTime();
@@ -281,10 +285,12 @@
        * Renders the prayer times fetched from the API.
        * @param {object} timings - Prayer timings object from Aladhan API.
        * @param {object} date - Date object for the prayer times.
+       * @param {string} locationName - Name of the detected/default location.
        */
-      const renderPrayerTimes = (timings, date) => {
+      const renderPrayerTimes = (timings, date, locationName) => {
         prayerTimesList.innerHTML = ''; // Clear previous entries
         errorPrayerTimes.classList.add('hidden'); // Hide any error messages
+        locationPermissionMessage.classList.add('hidden'); // Hide permission message
 
         // FIX: Reformat date.gregorian.date to 'YYYY-MM-DD' for reliable Date object creation
         const [day, month, year] = date.gregorian.date.split('-');
@@ -296,7 +302,7 @@
           month: 'long',
           day: 'numeric'
         });
-        currentLocationEl.textContent = `${CITY}, ${COUNTRY}`;
+        currentLocationEl.textContent = locationName;
 
         PRAYER_ORDER.forEach(prayer => {
           const time = timings[prayer];
@@ -321,15 +327,26 @@
       };
 
       /**
-       * Fetches prayer times from the Aladhan API.
+       * Fetches prayer times from the Aladhan API based on coordinates or city.
+       * @param {number|null} lat - Latitude.
+       * @param {number|null} lon - Longitude.
+       * @param {string} locationText - Text to display for the location.
        */
-      const fetchPrayerTimes = async () => {
+      const fetchPrayerTimesData = async (lat, lon, locationText) => {
         loadingPrayerTimes.classList.remove('hidden');
         prayerTimesList.innerHTML = ''; // Clear content during loading
         errorPrayerTimes.classList.add('hidden'); // Hide error on new fetch
+        locationPermissionMessage.classList.add('hidden'); // Hide permission message
+
+        let apiUrl = '';
+        if (lat && lon) {
+          apiUrl = `${API_BASE_URL_COORDS}?latitude=${lat}&longitude=${lon}&method=${CALCULATION_METHOD}`;
+        } else {
+          apiUrl = `${API_BASE_URL_CITY}?city=${DEFAULT_CITY}&country=${DEFAULT_COUNTRY}&method=${CALCULATION_METHOD}`;
+        }
 
         try {
-          const response = await fetch(`${API_BASE_URL}?city=${CITY}&country=${COUNTRY}&method=${CALCULATION_METHOD}`);
+          const response = await fetch(apiUrl);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -337,7 +354,13 @@
 
           if (data.code === 200 && data.status === 'OK' && data.data) {
             prayerTimesToday = data.data;
-            renderPrayerTimes(prayerTimesToday.timings, prayerTimesToday.date);
+            // Use the API's returned city name if available and not using default city
+            // The timezone field in data.data.meta.timezone is like "Asia/Phnom_Penh"
+            const determinedLocationName = (lat && lon && data.data.meta && data.data.meta.timezone) 
+                                           ? `${data.data.meta.timezone.split('/')[1].replace('_', ' ')}, ${data.data.meta.timezone.split('/')[0]}` // Extract city, country from timezone
+                                           : locationText;
+
+            renderPrayerTimes(prayerTimesToday.timings, prayerTimesToday.date, determinedLocationName);
           } else {
             throw new Error(data.status || 'Failed to retrieve prayer times.');
           }
@@ -351,8 +374,62 @@
         }
       };
 
-      // Initial fetch of prayer times
-      fetchPrayerTimes();
+      /**
+       * Gets user's current location and fetches prayer times.
+       */
+      const getGeolocationAndFetchPrayerTimes = () => {
+        if (navigator.geolocation) {
+          loadingPrayerTimes.textContent = 'កំពុងកំណត់ទីតាំងរបស់អ្នក...'; // Show locating message
+          locationPermissionMessage.classList.remove('hidden'); // Show permission prompt
+
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              fetchPrayerTimesData(lat, lon, 'ទីតាំងបច្ចុប្បន្ន'); // Use "Current Location" until API returns city
+            },
+            (error) => {
+              console.error('Geolocation error:', error.code, error.message); // Log specific error details
+              let errorMessage = 'ទីតាំងមិនអាចកំណត់បានទេ។ '; // Default message
+              
+              switch (error.code) {
+                case error.PERMISSION_DENIED:
+                  errorMessage += 'សូមអនុញ្ញាតការចូលប្រើទីតាំងនៅក្នុងការកំណត់កម្មវិធីរុករករបស់អ្នក។'; // "Please allow location access in your browser settings."
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  errorMessage += 'ព័ត៌មានទីតាំងមិនមានទេ។'; // "Location information is unavailable."
+                  break;
+                case error.TIMEOUT:
+                  errorMessage += 'ការស្នើសុំដើម្បីទទួលបានទីតាំងអ្នកប្រើប្រាស់បានអស់ពេល។'; // "The request to get user location timed out."
+                  break;
+                case error.UNKNOWN_ERROR:
+                  errorMessage += 'មានកំហុសមិនស្គាល់មួយបានកើតឡើង។'; // "An unknown error occurred."
+                  break;
+              }
+              errorMessage += ' កំពុងប្រើម៉ោងលំនាំដើមសម្រាប់ភ្នំពេញ។'; // Add fallback message
+
+              locationPermissionMessage.textContent = errorMessage;
+              locationPermissionMessage.classList.remove('hidden');
+              
+              // Fallback to default city if geolocation fails or is denied
+              fetchPrayerTimesData(null, null, `${DEFAULT_CITY}, ${DEFAULT_COUNTRY}`);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0
+            }
+          );
+        } else {
+          console.warn('Geolocation is not supported by this browser.');
+          fetchPrayerTimesData(null, null, `${DEFAULT_CITY}, ${DEFAULT_COUNTRY}`); // Fallback
+          locationPermissionMessage.textContent = 'កម្មវិធីរុករករបស់អ្នកមិនគាំទ្រទីតាំងភូមិសាស្ត្រទេ។ កំពុងប្រើម៉ោងលំនាំដើមសម្រាប់ភ្នំពេញ។'; // Khmer for "Your browser does not support geolocation. Using default times for Phnom Penh."
+          locationPermissionMessage.classList.remove('hidden');
+        }
+      };
+
+      // Initial fetch of prayer times using geolocation
+      getGeolocationAndFetchPrayerTimes();
     });
   </script>
 </body>
